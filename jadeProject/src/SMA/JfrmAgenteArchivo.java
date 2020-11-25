@@ -3,10 +3,13 @@ package SMA;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import jade.gui.GuiAgent;
+import jade.gui.GuiEvent;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class JfrmAgenteArchivo extends JFrame {
 
@@ -32,6 +35,13 @@ public class JfrmAgenteArchivo extends JFrame {
             ruta = chooser.getSelectedFile().toString();
             path.setText(ruta);
             System.out.println(ruta);
+        });
+        iniciarProcesoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                GuiEvent evento = new GuiEvent(this, 0);//el cero indica la accion a realizar, el 0 es para enviar
+                agent.postGuiEvent(evento);
+            }
         });
     }
 
@@ -67,5 +77,9 @@ public class JfrmAgenteArchivo extends JFrame {
      */
     public JComponent $$$getRootComponent$$$() {
         return rootPanel;
+    }
+
+    public String obtenerRuta() {
+        return path.getText();
     }
 }
