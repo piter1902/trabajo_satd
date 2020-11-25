@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="swing-layout-1.0.4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Practica5/MaterialSesion5/libreria/swing-layout-1.0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Practica5/MaterialSesion5/libreria/http.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Practica5/MaterialSesion5/libreria/crimson.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
