@@ -1,18 +1,17 @@
-
 package agentes;
 
 
 import jade.core.AID;
-import jade.core.behaviours.SimpleBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
+
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 public class AgenteArchivo extends GuiAgent {
 
@@ -39,6 +38,7 @@ public class AgenteArchivo extends GuiAgent {
         }
 
     }
+
     /*
      * Convierte un elemento Buffer a un String y lo retorna
      */
@@ -55,6 +55,6 @@ public class AgenteArchivo extends GuiAgent {
     protected void setup() {
         vfile = new JfrmAgenteArchivo(this);//se instancia la interfaz
         vfile.setVisible(true);//se muestra la interfaz
- 
+
     }
 }

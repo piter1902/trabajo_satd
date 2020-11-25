@@ -5,15 +5,13 @@
 package agentes;
 
 /**
- *
  * @author Johnny Alexander
  */
+
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFileChooser;
+
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class JfrmAgenteArchivo extends javax.swing.JFrame {
@@ -22,9 +20,14 @@ public class JfrmAgenteArchivo extends javax.swing.JFrame {
      * Creates new form JfrmAgenteArchivo
      */
     GuiAgent owner;
-
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel JpIndex;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton jbtnBrowser;
+    private javax.swing.JButton jbtnIniciar;
+    private javax.swing.JLabel jlblRuta;
     public JfrmAgenteArchivo(GuiAgent agente) {
-        this.owner = agente;//recibe por parametro el agente que lo creo        
+        this.owner = agente;//recibe por parametro el agente que lo creo
         initComponents();
     }
 
@@ -62,49 +65,49 @@ public class JfrmAgenteArchivo extends javax.swing.JFrame {
         javax.swing.GroupLayout JpIndexLayout = new javax.swing.GroupLayout(JpIndex);
         JpIndex.setLayout(JpIndexLayout);
         JpIndexLayout.setHorizontalGroup(
-            JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(JpIndexLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(JpIndexLayout.createSequentialGroup()
-                        .addComponent(jbtnBrowser)
-                        .addGap(18, 18, 18)
-                        .addComponent(jbtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(JpIndexLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlblRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(34, Short.MAX_VALUE))
+                JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(JpIndexLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(JpIndexLayout.createSequentialGroup()
+                                                .addComponent(jbtnBrowser)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jbtnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(JpIndexLayout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jlblRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(34, Short.MAX_VALUE))
         );
         JpIndexLayout.setVerticalGroup(
-            JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(JpIndexLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jbtnBrowser)
-                    .addComponent(jbtnIniciar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jlblRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(36, Short.MAX_VALUE))
+                JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(JpIndexLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jbtnBrowser)
+                                        .addComponent(jbtnIniciar))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(JpIndexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel1)
+                                        .addComponent(jlblRuta, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(JpIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(JpIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(JpIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(JpIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         pack();
@@ -126,12 +129,6 @@ public class JfrmAgenteArchivo extends javax.swing.JFrame {
         System.out.println(ruta);
 
     }//GEN-LAST:event_jbtnBrowserActionPerformed
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel JpIndex;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JButton jbtnBrowser;
-    private javax.swing.JButton jbtnIniciar;
-    private javax.swing.JLabel jlblRuta;
     // End of variables declaration//GEN-END:variables
 
     public String obtenerRuta() {

@@ -5,8 +5,8 @@ import jade.core.behaviours.Behaviour;
 
 public class ContadorExternoBehaviour extends Behaviour {
 
-    private int contador = 12;
     private final Agent agent;
+    private int contador = 12;
 
     public ContadorExternoBehaviour(Agent agent) {
         this.agent = agent;

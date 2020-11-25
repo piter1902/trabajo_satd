@@ -1,13 +1,11 @@
 package Ejercicios.Ejemplos;
 
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 
 public class ContadorExternoCyclicBehaviour extends CyclicBehaviour {
-    private int contador = 12;
-
     private final Agent agent;
+    private int contador = 12;
 
     public ContadorExternoCyclicBehaviour(Agent agent) {
         super();
@@ -29,7 +27,6 @@ public class ContadorExternoCyclicBehaviour extends CyclicBehaviour {
             agent.doDelete();
         }
     }
-
 
 
 }
