@@ -15,6 +15,7 @@ public class JfrmAgenteArchivo extends JFrame {
     private JButton seleccionarArchivoButton;
     private JButton iniciarProcesoButton;
     private JLabel path;
+    private JPanel rootPanel;
 
     public JfrmAgenteArchivo(GuiAgent agent) {
         this.agent = agent;
@@ -27,7 +28,7 @@ public class JfrmAgenteArchivo extends JFrame {
             final JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos arff-csv", "arff", "csv");
             chooser.setFileFilter(filter);
-            chooser.showOpenDialog(getContentPane());
+            chooser.showOpenDialog(rootPanel);
             ruta = chooser.getSelectedFile().toString();
             path.setText(ruta);
             System.out.println(ruta);
@@ -42,22 +43,29 @@ public class JfrmAgenteArchivo extends JFrame {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), 0, 0));
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), 0, 0));
         final JLabel label1 = new JLabel();
         label1.setText("Ruta:");
-        panel1.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        panel1.add(panel2, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        rootPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        rootPanel.add(panel1, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         seleccionarArchivoButton = new JButton();
         seleccionarArchivoButton.setText("Seleccionar archivo");
-        panel2.add(seleccionarArchivoButton);
+        panel1.add(seleccionarArchivoButton);
         iniciarProcesoButton = new JButton();
         iniciarProcesoButton.setText("Iniciar proceso");
-        panel2.add(iniciarProcesoButton);
+        panel1.add(iniciarProcesoButton);
         path = new JLabel();
         path.setText("");
-        panel1.add(path, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(48, 18), null, 0, false));
+        rootPanel.add(path, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(48, 18), null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return rootPanel;
     }
 }

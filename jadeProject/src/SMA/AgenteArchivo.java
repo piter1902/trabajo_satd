@@ -11,6 +11,7 @@ public class AgenteArchivo extends GuiAgent {
     protected void setup() {
         super.setup();
         this.formArchivo = new JfrmAgenteArchivo(this);
+        this.formArchivo.setContentPane(this.formArchivo.$$$getRootComponent$$$());
         this.formArchivo.pack();
         this.formArchivo.setVisible(true);
         this.formArchivo.setSize(400, 400);
