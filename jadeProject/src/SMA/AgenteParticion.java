@@ -28,6 +28,7 @@ public class AgenteParticion extends Agent {
         @Override
         public void action() {
             ACLMessage aclMessage = this.myAgent.blockingReceive();
+            this.myAgent.blockingReceive(1000);
             String data = aclMessage.getContent();
 
             List<String> lines = Arrays.asList(data.split("\n"));
