@@ -26,6 +26,7 @@ public class JfrmAgenteArchivo extends JFrame {
         // >>> IMPORTANT!! <<<
         // DO NOT EDIT OR ADD ANY CODE HERE!
         $$$setupUI$$$();
+        setTitle("Seleccionar archivo");
         seleccionarArchivoButton.addActionListener(actionEvent -> {
             String ruta;
             final JFileChooser chooser = new JFileChooser();
@@ -34,7 +35,7 @@ public class JfrmAgenteArchivo extends JFrame {
             chooser.showOpenDialog(rootPanel);
             ruta = chooser.getSelectedFile().toString();
             path.setText(ruta);
-            System.out.println(ruta);
+            System.out.format("JfrmAgenteArchivo: ruta del fichero seleccionado --> %s\n", ruta);
         });
         iniciarProcesoButton.addActionListener(new ActionListener() {
             @Override

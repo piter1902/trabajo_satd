@@ -51,9 +51,11 @@ public class AgentePredictorScorer extends GuiAgent {
                 if (content instanceof Instances) {
                     // Es el dataset
                     validationDataset = (Instances) content;
+                    System.out.format("Agente %s: test dataset received (%d rows)\n", myAgent.getName(), validationDataset.numInstances());
                 } else if (content instanceof AbstractClassifier) {
                     // Es el modelo
                     classifier = (AbstractClassifier) content;
+                    System.out.format("Agente %s: model received (name %s)\n", myAgent.getName(), classifier.getClass().getName());
                 }
             }
 
@@ -72,6 +74,7 @@ public class AgentePredictorScorer extends GuiAgent {
                 results = results + ("Media del error absoluto " + evaluation.meanAbsoluteError() + "\n");
                 results = results + (evaluation.toMatrixString("Matrix de confusion"));
                 formResults.setTextOnArea(results);
+                formResults.setTitle(myAgent.getLocalName());
                 // Mostramos la pantalla de resultados
                 formResults.setVisible(true);
             } catch (Exception exception) {
