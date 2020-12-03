@@ -4,9 +4,12 @@ import jade.core.AID;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
+import weka.core.Instances;
+import weka.core.converters.CSVLoader;
 
 import javax.swing.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +42,7 @@ public class AgenteArchivo extends GuiAgent {
         for (Object o : args) {
             if (o instanceof String){
                 String s = (String) o;
-                System.out.println(s);
+//                System.out.println(s);
                 // TODO: Espero que sea el global, si no, se ha jodido el invento
                 receivers.add(new AID(s, AID.ISGUID));
             }
@@ -63,10 +66,25 @@ public class AgenteArchivo extends GuiAgent {
             String ruta = formArchivo.obtenerRuta();
             System.out.println(ruta);
             file = new BufferedReader(new FileReader(ruta));        // Se lee el archivo
-            msg.setContent(convertir(file));                        // Se le añade el contenido al objeto de tipo mensaje, convirtiendo el Buffer en un String
+            Instances wekaDataset = null;
+            if (ruta.matches(".*\\.arff$")){
+                // Es un conjunto de weka
+                wekaDataset = new Instances(file);
+            } else if (ruta.matches(".*\\.csv$")){
+                // Es un conjunto CSV separado por ; y con cabecera
+                CSVLoader loader = new CSVLoader();
+                loader.setFile(new File(ruta));
+                loader.setFieldSeparator(";");
+                wekaDataset = loader.getDataSet();
+            } else {
+                throw new RuntimeException("El fichero no es CSV ni ARFF");
+            }
+            // Se añade el dataset al mensaje
+            msg.setContentObject(wekaDataset);
             // AID = Agent identification, se le añade a quien se le envia (lista de receptores)
             receivers.forEach(msg::addReceiver);
             send(msg);                                              // El agente actual envia el mensaje
+            System.out.format("Message sent from %s to %s\n", getLocalName(), receivers.toString());
             file.close();                                           // Se cierra el archivo
         } catch (IOException ex) {
             Logger.getLogger(agentes.AgenteArchivo.class.getName()).log(Level.SEVERE, null, ex);

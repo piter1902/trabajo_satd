@@ -1,74 +1,98 @@
 package SMA;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Normalize;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AgenteParticion extends Agent {
 
     private static final double PORCENTAJE_PARTICION = 0.8;
 
+    private Map<String, List<AID>> receivers = new HashMap<>();
+
     @Override
     protected void setup() {
-        addBehaviour(new PartitionBehaviour());
+        getReceivers();
+        addBehaviour(new PartitionBehaviour(receivers.get("partition1"), receivers.get("partition2")));
         super.setup();
     }
 
+    private void getReceivers() {
+        // Obtenemos el diccionario de receptores
+        List<Object> arguments = Arrays.asList(getArguments());
+        // Es una lista de 1 elemento (Map<String,List<String>>)
+        if (arguments.get(0) instanceof Map) {
+            Map<String, String[]> receptores = (Map<String, String[]>) arguments.get(0);
+            receptores.forEach((listName, stringList) -> {
+                List<AID> listReceivers = Arrays.asList(stringList).stream().map(s -> new AID(s, AID.ISGUID)).collect(Collectors.toList());
+                receivers.put(listName, listReceivers);
+            });
+        }
+    }
+
     private static class PartitionBehaviour extends OneShotBehaviour {
+
+        private List<AID> partition1, partition2;
+
+        public PartitionBehaviour(List<AID> partition1, List<AID> partition2) {
+            this.partition1 = partition1;
+            this.partition2 = partition2;
+        }
+
         @Override
         public void action() {
             ACLMessage aclMessage = this.myAgent.blockingReceive();
-            this.myAgent.blockingReceive(1000);
-            String data = aclMessage.getContent();
+            Instances wekaDataset;
+            try {
+                wekaDataset = ((Instances) aclMessage.getContentObject());
+            } catch (UnreadableException e) {
+                throw new RuntimeException("No se puede obtener el dataset del mensaje");
+            }
 
-            List<String> lines = Arrays.asList(data.split("\n"));
-            // Quitamos la cabecera
-            // TODO: Falla aqui (unsupported operation exception). Es probable que sea por el conjunto de datos weka.
-            String firstLine = lines.remove(0);
+            System.out.format("Message received at %s : %s (rows)\n", myAgent.getName(), wekaDataset.numInstances());
+
+            // Randomize dataset
+            wekaDataset.randomize(new Random(System.nanoTime()));
 
             // Partition
-            Collections.shuffle(lines);
-            int partitionIndex = (int) (lines.size() * PORCENTAJE_PARTICION);
+            int partition1_size = (int) (wekaDataset.numInstances() * PORCENTAJE_PARTICION);
+            int partition2_size = wekaDataset.numInstances() - partition1_size;
 
-            List<String> partition1 = lines.subList(0, partitionIndex);
-            // Reduce to one string (concatenate)
-            String p1 = partition1.stream().reduce("", (s, acum) -> s + acum);
+            Instances wekaDataset1 = new Instances(wekaDataset, 0, partition1_size);
+            Instances wekaDataset2 = new Instances(wekaDataset, partition1_size, partition2_size);
 
-            List<String> partition2 = lines.subList(partitionIndex, lines.size());
-            // Reduce to one string (concatenate)
-            String p2 = partition2.stream().reduce("", (s, acum) -> s + acum);
-
-            // TODO: Send dynamically Weka Datasets (DataSource)
-            InputStream inputStream1 = new ByteArrayInputStream(p1.getBytes());
-            InputStream inputStream2 = new ByteArrayInputStream(p2.getBytes());
-
-
-            ConverterUtils.DataSource dataSource1 = new ConverterUtils.DataSource(inputStream1);
-            ConverterUtils.DataSource dataSource2 = new ConverterUtils.DataSource(inputStream2);
-
-            Instances wekaDataset1 = null;
-            Instances wekaDataset2 = null;
-            try {
-                wekaDataset1 = dataSource1.getDataSet();
-                wekaDataset2 = dataSource2.getDataSet();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+            System.out.format("El conjunto de datos partition1 tiene %d filas\n", wekaDataset1.numInstances());
+            System.out.format("El conjunto de datos partition2 tiene %d filas\n", wekaDataset2.numInstances());
 
             // Como en el ejemplo de AgenteDM
             wekaDataset1.setClassIndex(wekaDataset1.numAttributes() - 1);
             wekaDataset2.setClassIndex(wekaDataset2.numAttributes() - 1);
 
+            // Add receivers
+
+            System.out.format("Conjuntos de datos enviados.\n");
+
+            ACLMessage partition1Message = new ACLMessage(ACLMessage.REQUEST);
+            ACLMessage partition2Message = new ACLMessage(ACLMessage.REQUEST);
+            try {
+                partition1Message.setContentObject(wekaDataset1);
+                partition2Message.setContentObject(wekaDataset2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            partition1.forEach(partition1Message::addReceiver);
+            partition2.forEach(partition2Message::addReceiver);
+
+            // Send messages
+            myAgent.send(partition1Message);
+            myAgent.send(partition2Message);
 
         }
 

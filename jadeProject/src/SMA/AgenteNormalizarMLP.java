@@ -27,6 +27,8 @@ public class AgenteNormalizarMLP extends Agent {
                 e.printStackTrace();
             }
 
+            System.out.format("Agent %s received %d rows\n", myAgent.getName(), wekaDataset.numInstances());
+
             // normalize dataset
             Normalize filter = new Normalize();
             try {
@@ -45,6 +47,7 @@ public class AgenteNormalizarMLP extends Agent {
             }
 
             // TODO: Send dynamically mlp object to next node
+
 
         }
     }
