@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import weka.core.Instances;
 
@@ -48,7 +49,14 @@ public class AgenteParticion extends Agent {
 
         @Override
         public void action() {
-            ACLMessage aclMessage = this.myAgent.blockingReceive();
+            // Aqui siempre se espera un mensaje de tipo REQUEST
+            // Funciona como un Blocking Receive
+            ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+
+            // Send ACK to sender
+            //TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
+
+            // Parse Message
             Instances wekaDataset;
             try {
                 wekaDataset = ((Instances) aclMessage.getContentObject());
@@ -57,6 +65,8 @@ public class AgenteParticion extends Agent {
             }
 
             System.out.format("Message received at %s : %s (rows)\n", myAgent.getName(), wekaDataset.numInstances());
+
+
 
             // Randomize dataset
             wekaDataset.randomize(new Random(System.nanoTime()));
@@ -95,6 +105,8 @@ public class AgenteParticion extends Agent {
             myAgent.send(partition2Message);
 
         }
+
+
 
     }
 }
