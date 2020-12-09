@@ -7,9 +7,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="libreria" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="lib1" level="project" />
     <orderEntry type="library" name="jade" level="project" />
+    <orderEntry type="library" name="forms_rt-7.0.3" level="project" />
     <orderEntry type="library" name="weka" level="project" />
     <orderEntry type="library" name="swing-layout-1.0.4" level="project" />
-    <orderEntry type="library" name="forms_rt-7.0.3" level="project" />
+    <orderEntry type="library" name="crimson" level="project" />
+    <orderEntry type="library" name="http" level="project" />
   </component>
 </module>

@@ -32,21 +32,21 @@ public class AgenteCreador extends Agent {
         map.put("NBa_PS", generateNewAgent("Naive Bayes", AgentePredictorScorer.class, null));
 
         // Agentes de los modelos (entrenamiento con la primera particion)
-        map.put("Normalizar_MLP", generateNewAgent(null, AgenteNormalizarMLP.class, map.get("MLP_PS")));
+        map.put("Normalizar_MLP", generateNewAgent("Normalizar_MLP", AgenteNormalizarMLP.class, map.get("MLP_PS")));
         // TODO: Meter los otros agentes aqui
 
         // Agente de normalizar la segunda particion
-        map.put("AplicarNormalizado", generateNewAgent(null, AgenteNormalizar.class, map.get("MLP_PS")));
+        map.put("AplicarNormalizado", generateNewAgent("AplicarNormalizado", AgenteNormalizar.class, map.get("MLP_PS")));
 
         // Agente de particion
         // Se le envia un map<String, list<String>> para denotar: partition1, partition2
         Map<String, String[]> argument = new HashMap<>();
         argument.put("partition1", generateList(map.get("Normalizar_MLP"))); //TODO: Incluir el resto
         argument.put("partition2", generateList(map.get("J48_PS"), map.get("NBa_PS"), map.get("AplicarNormalizado")));
-        map.put("Partition", generateNewAgent(null, AgenteParticion.class, argument));
+        map.put("Partition", generateNewAgent("Partition", AgenteParticion.class, argument));
 
         // Agente de lectura de fichero
-        map.put("Lectura", generateNewAgent(null, AgenteArchivo.class, map.get("Partition")));
+        map.put("Lectura", generateNewAgent("Lectura", AgenteArchivo.class, map.get("Partition")));
     }
 
     private String[] generateList(String... list) {

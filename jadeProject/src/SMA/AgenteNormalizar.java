@@ -47,6 +47,8 @@ public class AgenteNormalizar extends Agent {
         @Override
         public void action() {
             ACLMessage aclMessage = this.myAgent.blockingReceive();
+            // Reply with ACK
+            TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
             Instances wekaDataset = null;
             try {
                 wekaDataset = (Instances) aclMessage.getContentObject();
@@ -72,6 +74,9 @@ public class AgenteNormalizar extends Agent {
                 e.printStackTrace();
             }
             this.myAgent.send(sendMessage);
+            // Timeout protocol
+            TimeoutAdapter.sendWithTimeout(sendMessage, this.myAgent);
+
             System.out.format("Agent %s: message sent to receivers\n", this.myAgent.getName());
 
         }

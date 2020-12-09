@@ -42,6 +42,9 @@ public class AgentePredictorScorer extends GuiAgent {
             // Recepcion de los dos parametros (dataset y modelo)
             for (int i = 0; i < 2; i++) {
                 ACLMessage aclMessage = this.myAgent.blockingReceive();
+                // Reply with ACK
+                TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
+
                 Object content = null;
                 try {
                     content = aclMessage.getContentObject();

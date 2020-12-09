@@ -39,7 +39,7 @@ public class AgenteNormalizarMLP extends Agent {
 
     private static class normalizarYMLPBehaviour extends OneShotBehaviour {
 
-        private List<AID> receivers;
+        private final List<AID> receivers;
 
         public normalizarYMLPBehaviour(List<AID> receivers) {
             this.receivers = receivers;
@@ -48,6 +48,8 @@ public class AgenteNormalizarMLP extends Agent {
         @Override
         public void action() {
             ACLMessage aclMessage = this.myAgent.blockingReceive();
+            // Reply with ACK
+            TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
             Instances wekaDataset = null;
             try {
                 wekaDataset = (Instances) aclMessage.getContentObject();
@@ -84,6 +86,8 @@ public class AgenteNormalizarMLP extends Agent {
                 e.printStackTrace();
             }
             this.myAgent.send(sendMessage);
+            // Timeout protocol
+            TimeoutAdapter.sendWithTimeout(sendMessage, this.myAgent);
 
             System.out.format("Agent %s: message sent to receivers\n", this.myAgent.getName());
 

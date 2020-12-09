@@ -16,7 +16,7 @@ public class AgenteParticion extends Agent {
 
     private static final double PORCENTAJE_PARTICION = 0.8;
 
-    private Map<String, List<AID>> receivers = new HashMap<>();
+    private final Map<String, List<AID>> receivers = new HashMap<>();
 
     @Override
     protected void setup() {
@@ -40,7 +40,8 @@ public class AgenteParticion extends Agent {
 
     private static class PartitionBehaviour extends OneShotBehaviour {
 
-        private List<AID> partition1, partition2;
+        private final List<AID> partition1;
+        private final List<AID> partition2;
 
         public PartitionBehaviour(List<AID> partition1, List<AID> partition2) {
             this.partition1 = partition1;
@@ -54,7 +55,7 @@ public class AgenteParticion extends Agent {
             ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 
             // Send ACK to sender
-            //TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
+            TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
 
             // Parse Message
             Instances wekaDataset;
@@ -103,6 +104,9 @@ public class AgenteParticion extends Agent {
             // Send messages
             myAgent.send(partition1Message);
             myAgent.send(partition2Message);
+
+            // Timeout protocol
+            TimeoutAdapter.sendWithTimeout2Messages(partition1Message, partition2Message, this.myAgent);
 
         }
 
