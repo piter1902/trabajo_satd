@@ -4,16 +4,15 @@ import jade.core.AID;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
-import jade.core.Agent;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
+import weka.core.converters.CSVSaver;
 
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -72,12 +71,15 @@ public class AgenteArchivo extends GuiAgent {
             if (ruta.matches(".*\\.arff$")) {
                 // Es un conjunto de weka
                 wekaDataset = new Instances(file);
+                saveCSV(wekaDataset);
             } else if (ruta.matches(".*\\.csv$")) {
                 // Es un conjunto CSV separado por ; y con cabecera
                 CSVLoader loader = new CSVLoader();
-                loader.setFile(new File(ruta));
-                loader.setFieldSeparator(";");
+                loader.setSource(new File(ruta));
+                loader.setFieldSeparator(",");
                 wekaDataset = loader.getDataSet();
+                // TODO: Comprobar el por qué falla.
+                //  Utilizar: https://stackoverflow.com/questions/15637553/weka-simplekmeans-cannot-handle-string-attributes
             } else {
                 throw new RuntimeException("El fichero no es CSV ni ARFF");
             }
@@ -93,6 +95,17 @@ public class AgenteArchivo extends GuiAgent {
         } catch (IOException ex) {
             Logger.getLogger(agentes.AgenteArchivo.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(formArchivo, ex.getMessage());
+        }
+    }
+
+    private void saveCSV(Instances instances) {
+        CSVSaver csvSaver = new CSVSaver();
+        try {
+            csvSaver.setInstances(instances);
+            csvSaver.setFile(new File("/Users/pedroalluetamargo/Desktop/vehiculos.csv"));
+            csvSaver.writeBatch();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

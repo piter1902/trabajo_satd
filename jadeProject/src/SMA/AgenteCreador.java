@@ -33,7 +33,8 @@ public class AgenteCreador extends Agent {
 
         // Agentes de los modelos (entrenamiento con la primera particion)
         map.put("Normalizar_MLP", generateNewAgent("Normalizar_MLP", AgenteNormalizarMLP.class, map.get("MLP_PS")));
-        // TODO: Meter los otros agentes aqui
+        map.put("J48", generateNewAgent("J48_Model", AgenteJ48.class, map.get("J48_PS")));
+        map.put("NaiveBayes", generateNewAgent("NaiveBayes_Model", AgenteNaiveBayes.class, map.get("NBa_PS")));
 
         // Agente de normalizar la segunda particion
         map.put("AplicarNormalizado", generateNewAgent("AplicarNormalizado", AgenteNormalizar.class, map.get("MLP_PS")));
@@ -41,7 +42,7 @@ public class AgenteCreador extends Agent {
         // Agente de particion
         // Se le envia un map<String, list<String>> para denotar: partition1, partition2
         Map<String, String[]> argument = new HashMap<>();
-        argument.put("partition1", generateList(map.get("Normalizar_MLP"))); //TODO: Incluir el resto
+        argument.put("partition1", generateList(map.get("Normalizar_MLP"), map.get("J48"), map.get("NaiveBayes")));
         argument.put("partition2", generateList(map.get("J48_PS"), map.get("NBa_PS"), map.get("AplicarNormalizado")));
         map.put("Partition", generateNewAgent("Partition", AgenteParticion.class, argument));
 
