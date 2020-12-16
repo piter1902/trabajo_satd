@@ -9,6 +9,7 @@ import java.util.List;
 
 public class TimeoutAdapter {
 
+    // Numero máximo de reintentos de envíos
     private static final int MAX_COUNT = 10;
 
     public static void sendWithTimeout(ACLMessage msg, Agent agent) {

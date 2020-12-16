@@ -30,7 +30,7 @@ public class JfrmAgenteArchivo extends JFrame {
         seleccionarArchivoButton.addActionListener(actionEvent -> {
             String ruta;
             final JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos arff-csv", "arff", "csv");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos arff", "arff");
             chooser.setFileFilter(filter);
             chooser.showOpenDialog(rootPanel);
             ruta = chooser.getSelectedFile().toString();

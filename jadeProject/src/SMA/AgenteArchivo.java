@@ -5,8 +5,8 @@ import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
 import weka.core.Instances;
-import weka.core.converters.CSVLoader;
 import weka.core.converters.CSVSaver;
+import weka.core.converters.Saver;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,17 +69,18 @@ public class AgenteArchivo extends GuiAgent {
             if (ruta.matches(".*\\.arff$")) {
                 // Es un conjunto de weka
                 wekaDataset = new Instances(file);
-                saveCSV(wekaDataset);
-            } else if (ruta.matches(".*\\.csv$")) {
+                saveToFile(wekaDataset, new CSVSaver());
+            } /*else if (ruta.matches(".*\\.csv$")) {
                 // Es un conjunto CSV separado por , y con cabecera
                 CSVLoader loader = new CSVLoader();
                 loader.setSource(new File(ruta));
                 loader.setFieldSeparator(",");
                 wekaDataset = loader.getDataSet();
-                // TODO: Comprobar el por qué falla.
-                //  Utilizar: https://stackoverflow.com/questions/15637553/weka-simplekmeans-cannot-handle-string-attributes
-            } else {
-                throw new RuntimeException("El fichero no es CSV ni ARFF");
+                saveToFile(wekaDataset, new ArffSaver());
+                // El problema es el convertidor de Weka. Usando otro igual funciona.
+                // Recogemos cable
+            }*/ else {
+                throw new RuntimeException("El fichero no es ARFF");
             }
             // Se añade el dataset al mensaje
             msg.setContentObject(wekaDataset);
@@ -95,13 +97,12 @@ public class AgenteArchivo extends GuiAgent {
         }
     }
 
-    private void saveCSV(Instances instances) {
-        CSVSaver csvSaver = new CSVSaver();
+    private void saveToFile(Instances instances, Saver saver) {
         try {
-            csvSaver.setInstances(instances);
-            csvSaver.setFile(new File("/Users/pedroalluetamargo/Desktop/vehiculos.csv"));
-            csvSaver.writeBatch();
-        } catch (IOException e) {
+            saver.setInstances(instances);
+            saver.setFile(new File("/Users/pedroalluetamargo/Desktop/" + UUID.randomUUID().toString() + saver.getFileExtension()));
+            saver.writeBatch();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
