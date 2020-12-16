@@ -20,12 +20,8 @@ import java.util.logging.Logger;
 
 public class AgenteArchivo extends GuiAgent {
 
-    private static final int MAX_COUNT = 10;
     // GUI
     private JfrmAgenteArchivo formArchivo;
-
-    // File
-    private BufferedReader file;
 
     // Lista de receptores
     private List<AID> receivers;
@@ -66,14 +62,15 @@ public class AgenteArchivo extends GuiAgent {
         try {
             String ruta = formArchivo.obtenerRuta();
             System.out.println(ruta);
-            file = new BufferedReader(new FileReader(ruta));        // Se lee el archivo
-            Instances wekaDataset = null;
+            // File
+            BufferedReader file = new BufferedReader(new FileReader(ruta));        // Se lee el archivo
+            Instances wekaDataset;
             if (ruta.matches(".*\\.arff$")) {
                 // Es un conjunto de weka
                 wekaDataset = new Instances(file);
                 saveCSV(wekaDataset);
             } else if (ruta.matches(".*\\.csv$")) {
-                // Es un conjunto CSV separado por ; y con cabecera
+                // Es un conjunto CSV separado por , y con cabecera
                 CSVLoader loader = new CSVLoader();
                 loader.setSource(new File(ruta));
                 loader.setFieldSeparator(",");
@@ -109,15 +106,4 @@ public class AgenteArchivo extends GuiAgent {
         }
     }
 
-    /*
-     * Convierte un elemento Buffer a un String y lo retorna
-     */
-    public String convertir(BufferedReader file) throws IOException {
-        String temp;//Almacena la linea leida del file
-        String cadena = "";//cadena final
-        while ((temp = file.readLine()) != null) {
-            cadena = cadena + temp + "\n";
-        }
-        return cadena;
-    }
 }
