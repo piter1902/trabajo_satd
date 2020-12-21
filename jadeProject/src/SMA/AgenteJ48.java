@@ -1,5 +1,6 @@
 package SMA;
 
+import Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;

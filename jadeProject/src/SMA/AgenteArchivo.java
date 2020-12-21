@@ -1,5 +1,6 @@
 package SMA;
 
+import Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;

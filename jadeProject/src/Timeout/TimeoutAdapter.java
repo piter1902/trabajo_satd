@@ -1,4 +1,4 @@
-package SMA;
+package Timeout;
 
 import jade.core.AID;
 import jade.core.Agent;
