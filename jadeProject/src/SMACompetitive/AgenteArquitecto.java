@@ -16,7 +16,6 @@ import java.util.*;
 
 public class AgenteArquitecto extends Agent {
 
-
     @Override
     protected void setup() {
         try {
@@ -57,6 +56,8 @@ public class AgenteArquitecto extends Agent {
         ContainerController cc = getContainerController();
         String agentName = name != null ? name : UUID.randomUUID().toString();
         AgentController ac = cc.createNewAgent(agentName, classObject.getName(), args);
+        // TODO: De esta manera tienen ventaja los agentes creados primero.
+        // TODO: Posible implementación de barrera
         ac.start();
         return ac.getName();
     }
@@ -138,12 +139,38 @@ public class AgenteArquitecto extends Agent {
                         getJoePublic(sender);
                         break;
 
-                    case CONVERT_JOEPUBLIC:
+                    case CONVERT_JOEPUBLIC_TO_RESISTANCE:
+                        //Añadir el agente de tipo JoePublic a resistencia
+                        // TODO: Comprobar si esto funciona si no -> enviar una tupla
+                        agentName = aclMessage.getContent();
+                        convertPublicToResistencia(agentName);
+                        ACLMessage response;
                         break;
-
-                    case ORACULO_FOUND:
+                    case CONVERT_JOEPUBLIC_TO_SYSTEM:
+                        //Añadir el agente de tipo JoePublic a sistema
+                        // TODO: Comprobar si esto funciona si no -> enviar una tupla
+                        agentName = aclMessage.getContent();
+                        convertPublicToSystem(agentName);
                         break;
-
+                    case ORACULO_FOUND_RESISTANCE:
+                        // El equipo RESISTANCE ha encontrado al oraculo
+                        // TODO: Comprobar si esto funciona si no -> enviar una tupla
+                        agentName = aclMessage.getContent();
+                        oraculoFound(agentName, Constants.TEAM.RESISTANCE);
+                        break;
+                    case ORACULO_FOUND_SYSTEM:
+                        // El equipo SYSTEM ha encontrado al oraculo
+                        // TODO: Comprobar si esto funciona si no -> enviar una tupla
+                        agentName = aclMessage.getContent();
+                        oraculoFound(agentName, Constants.TEAM.SYSTEM);
+                        break;
+                    case KILL_JOEPUBLIC:
+                        // Mensaje de agente del sistema que indica que se debe eliminar un JoePublic
+                        agentName = aclMessage.getContent();
+                        removeAgentFromMap(agentName, Constants.TEAM.JOEPUBLIC);
+                        busyAgents.remove(agentName);
+                        killAgent(agentName);
+                        break;
                     default:
                         // Error?
                         System.err.println("Mensaje no reconocido: " + message);
@@ -157,7 +184,66 @@ public class AgenteArquitecto extends Agent {
                     || agentMap.get(Constants.TEAM.SYSTEM).entrySet().size() == 0;
             if (gameOver) {
                 // TODO: Hacer cosas (o creamos otro behaviour?)
+
             }
+        }
+
+        private void oraculoFound(String agentName, Constants.TEAM team) {
+            ACLMessage response;
+            removeAgentFromMap(agentName, Constants.TEAM.JOEPUBLIC);
+            busyAgents.remove(agentName);
+            killAgent(agentName);
+            String lider = null;
+            switch (team) {
+                case RESISTANCE:
+                    lider = agentMap.get(Constants.TEAM.RESISTANCE).get(Constants.NEO_NAME);
+                    break;
+                case SYSTEM:
+                    lider = agentMap.get(Constants.TEAM.SYSTEM).get(Constants.SMITH_NAME);
+                    break;
+            }
+
+            if (lider != null) {
+                response = new ACLMessage(ACLMessage.REQUEST);
+                response.addReceiver(new AID(lider, AID.ISGUID));
+                try {
+                    response.setContentObject(Constants.AGENT_MESSAGE.ADD_BONUS_ORACULO);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+            }
+        }
+
+        private void convertPublicToSystem(String agentName) {
+            ACLMessage response;
+            convertJoePublic(agentName, Constants.TEAM.SYSTEM);
+            response = new ACLMessage(ACLMessage.REQUEST);
+            response.addReceiver(new AID(agentName, AID.ISGUID));
+            try {
+                response.setContentObject(Constants.AGENT_MESSAGE.CONVERT_TO_SYSTEM);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        }
+
+        private void convertPublicToResistencia(String agentName) {
+            convertJoePublic(agentName, Constants.TEAM.RESISTANCE);
+            ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
+            response.addReceiver(new AID(agentName, AID.ISGUID));
+            try {
+                response.setContentObject(Constants.AGENT_MESSAGE.CONVERT_TO_RESISTANCE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        }
+
+        private void convertJoePublic(String JPName, Constants.TEAM team) {
+            removeAgentFromMap(JPName, Constants.TEAM.JOEPUBLIC);
+            busyAgents.remove(JPName);
+            addAgentToMap(JPName, team);
         }
 
         private void getJoePublic(AID sender) {
@@ -208,6 +294,10 @@ public class AgenteArquitecto extends Agent {
                     break;
                 }
             }
+        }
+
+        private void addAgentToMap(String agentName, Constants.TEAM team) {
+            agentMap.get(team).put(UUID.randomUUID().toString(), agentName);
         }
 
         private void getSystemMatch(AID sender) {
