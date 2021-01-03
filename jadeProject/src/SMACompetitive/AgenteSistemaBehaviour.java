@@ -25,7 +25,6 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     private boolean endOfGame;
 
     AgenteSistemaBehaviour(int bonus, AID arquitect) {
-        this.bonus = bonus;
         this.endOfGame = false;
         this.arquitectAID = arquitect;
         this.random = new Random(System.nanoTime());
@@ -59,7 +58,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
                     switch (response) {
                         case WIN:
                             // Recalcular bonus
-                            recalcBonus(1);
+                            ((AgenteSimulacion) this.myAgent).recalcBonus(1);
                             break;
 
                         case DEFEAT:
@@ -69,7 +68,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
 
                         case TIE:
                             // Empate, recalcular bonus
-                            recalcBonus(-1);
+                            ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
                             break;
                     }
                 } else {
@@ -102,7 +101,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
                             switch (result) {
                                 case WIN:
                                     // Recalcular bonus
-                                    recalcBonus(+1);
+                                    ((AgenteSimulacion) this.myAgent).recalcBonus(+1);
                                     break;
                                 case DEFEAT:
                                     // Esperamos la eliminacion
@@ -110,7 +109,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
                                     break;
                                 case TIE:
                                     // Empate
-                                    recalcBonus(-1);
+                                    ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
                                     break;
                             }
                         }
@@ -168,8 +167,8 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     }
 
     private Constants.BATTLE_RESPONSE battleIntern(int enemyBonus) {
-        boolean enemyIsBigger = enemyBonus > this.bonus;
-        int bonusFinal = enemyIsBigger ? enemyBonus - this.bonus : this.bonus - enemyBonus;
+        boolean enemyIsBigger = enemyBonus > ((AgenteSimulacion) this.myAgent).getBonus();
+        int bonusFinal = enemyIsBigger ? enemyBonus - ((AgenteSimulacion) this.myAgent).getBonus() : ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
         int randomNum = this.random.nextInt(bonusFinal);
         Constants.BATTLE_RESPONSE result;
         if (bonusFinal - randomNum > 5) {
@@ -214,7 +213,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         aclMessage.addReceiver(arquitectAID);
         try {
-            aclMessage.setContentObject(Constants.ARQUITECT_MESSAGE.GET_SYSTEM_MATCH);
+            aclMessage.setContentObject(Constants.ARQUITECT_MESSAGE.GET_RESISTANCE_MATCH);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -226,11 +225,6 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
         // Fin de la partida
         this.endOfGame = true;
-    }
-
-    private void recalcBonus(int increment) {
-        // TODO: Change this to use more complex formula?
-        this.bonus += increment;
     }
 
     private Constants.BATTLE_RESPONSE getBattleResponse() {
@@ -248,7 +242,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     private void sendBonusToOpponent(AID oponentAID) {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(oponentAID);
-        aclMessage.setContent(String.valueOf(this.bonus));
+        aclMessage.setContent(String.valueOf(((AgenteSimulacion) this.myAgent).getBonus()));
         try {
             aclMessage.setContentObject(Constants.AGENT_MESSAGE.BATTLE);
         } catch (IOException e) {
@@ -278,12 +272,12 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     private void sendJoePublicResponse(String guid, Constants.JOEPUBLIC_RESPONSE response) {
         Constants.ARQUITECT_MESSAGE type = null;
         if (response == Constants.JOEPUBLIC_RESPONSE.YES) {
-            type = Constants.ARQUITECT_MESSAGE.CONVERT_JOEPUBLIC_TO_RESISTANCE;
+            type = Constants.ARQUITECT_MESSAGE.CONVERT_JOEPUBLIC_TO_SYSTEM;
         } else if (response == Constants.JOEPUBLIC_RESPONSE.NO) {
             // El agente del sistema mata al JoePublic no convertido
             type = Constants.ARQUITECT_MESSAGE.KILL_JOEPUBLIC;
         } else if (response == Constants.JOEPUBLIC_RESPONSE.ORACULO) {
-            type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_RESISTANCE;
+            type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_SYSTEM;
         }
         manipulateJoePublic(guid, type);
     }

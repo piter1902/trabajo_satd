@@ -18,4 +18,14 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
         random = new Random(System.nanoTime());
         this.probabilityToConvertResistance = random.nextInt(100);
     }
+
+    @Override
+    public void recalcBonus(int incremento) {
+
+    }
+
+    @Override
+    public int getBonus() {
+        return 0;
+    }
 }

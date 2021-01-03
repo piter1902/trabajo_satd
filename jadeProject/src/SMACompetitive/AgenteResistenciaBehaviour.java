@@ -19,13 +19,10 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private final AID arquitectAID;
     // Componente aleatorio
     private final Random random;
-    // Bonus
-    private int bonus;
     // End of game
     private boolean endOfGame;
 
     AgenteResistenciaBehaviour(int bonus, AID arquitect) {
-        this.bonus = bonus;
         this.endOfGame = false;
         this.arquitectAID = arquitect;
         this.random = new Random(System.nanoTime());
@@ -59,7 +56,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                     switch (response) {
                         case WIN:
                             // Recalcular bonus
-                            recalcBonus(1);
+                            ((AgenteSimulacion) this.myAgent).recalcBonus(+1);
                             break;
 
                         case DEFEAT:
@@ -69,7 +66,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
                         case TIE:
                             // Empate, recalcular bonus
-                            recalcBonus(-1);
+                            ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
                             break;
                     }
                 } else {
@@ -83,7 +80,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                         // Respuesta del agente JoePublic
                         Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
                         sendJoePublicResponse(guid, response);
-                        // TODO: Falta el modificar el bonus si se trata del agente NEO
                     } else {
                         // Habrá que luchar
                         sendRequestForMatch();
@@ -102,7 +98,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                             switch (result) {
                                 case WIN:
                                     // Recalcular bonus
-                                    recalcBonus(+1);
+                                    ((AgenteSimulacion) this.myAgent).recalcBonus(+1);
                                     break;
                                 case DEFEAT:
                                     // Esperamos la eliminacion
@@ -110,7 +106,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                                     break;
                                 case TIE:
                                     // Empate
-                                    recalcBonus(-1);
+                                    ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
                                     break;
                             }
                         }
@@ -168,8 +164,8 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     }
 
     private Constants.BATTLE_RESPONSE battleIntern(int enemyBonus) {
-        boolean enemyIsBigger = enemyBonus > this.bonus;
-        int bonusFinal = enemyIsBigger ? enemyBonus - this.bonus : this.bonus - enemyBonus;
+        boolean enemyIsBigger = enemyBonus > ((AgenteSimulacion) this.myAgent).getBonus();
+        int bonusFinal = enemyIsBigger ? enemyBonus - ((AgenteSimulacion) this.myAgent).getBonus() : ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
         int randomNum = this.random.nextInt(bonusFinal);
         Constants.BATTLE_RESPONSE result;
         if (bonusFinal - randomNum > 5) {
@@ -228,11 +224,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         this.endOfGame = true;
     }
 
-    private void recalcBonus(int increment) {
-        // TODO: Change this to use more complex formula?
-        this.bonus += increment;
-    }
-
     private Constants.BATTLE_RESPONSE getBattleResponse() {
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
@@ -248,7 +239,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private void sendBonusToOpponent(AID oponentAID) {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(oponentAID);
-        aclMessage.setContent(String.valueOf(this.bonus));
+        aclMessage.setContent(String.valueOf(((AgenteSimulacion) this.myAgent).getBonus()));
         try {
             aclMessage.setContentObject(Constants.AGENT_MESSAGE.BATTLE);
         } catch (IOException e) {

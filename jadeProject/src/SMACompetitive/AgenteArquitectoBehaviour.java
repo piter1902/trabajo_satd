@@ -213,7 +213,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         }
 
         if (lider != null) {
-            response = new ACLMessage(ACLMessage.REQUEST);
+            response = new ACLMessage(ACLMessage.AGREE);
             response.addReceiver(new AID(lider, AID.ISGUID));
             try {
                 response.setContentObject(Constants.AGENT_MESSAGE.ADD_BONUS_ORACULO);
