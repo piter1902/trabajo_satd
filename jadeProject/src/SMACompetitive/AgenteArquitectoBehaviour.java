@@ -94,24 +94,35 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                     convertPublicToResistencia(agentName);
                     ACLMessage response;
                     break;
+
                 case CONVERT_JOEPUBLIC_TO_SYSTEM:
-                    //Añadir el agente de tipo JoePublic a sistema
+                    // Añadir el agente de tipo JoePublic a sistema
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = aclMessage.getContent();
                     convertPublicToSystem(agentName);
                     break;
+
+                case NOT_CONVERTED:
+                    // Los agentes de la resistencia no matan a los agentes JoePublic. Se libera
+                    agentName = aclMessage.getContent();
+                    // Lo liberamos
+                    busyAgents.remove(agentName);
+                    break;
+
                 case ORACULO_FOUND_RESISTANCE:
                     // El equipo RESISTANCE ha encontrado al oraculo
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = aclMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.RESISTANCE);
                     break;
+
                 case ORACULO_FOUND_SYSTEM:
                     // El equipo SYSTEM ha encontrado al oraculo
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = aclMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.SYSTEM);
                     break;
+
                 case KILL_JOEPUBLIC:
                     // Mensaje de agente del sistema que indica que se debe eliminar un JoePublic
                     agentName = aclMessage.getContent();
@@ -119,6 +130,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                     busyAgents.remove(agentName);
                     killAgent(agentName);
                     break;
+
                 default:
                     // Error?
                     System.err.println("Mensaje no reconocido: " + message);
@@ -224,6 +236,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
     private void getJoePublic(AID sender) {
         String joePublicAgent = lookupAgent(Constants.TEAM.JOEPUBLIC);
+        this.busyAgents.add(joePublicAgent);
         ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
         response.addReceiver(sender);
         response.setContent(joePublicAgent);
