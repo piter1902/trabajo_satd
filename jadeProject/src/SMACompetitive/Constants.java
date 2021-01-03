@@ -19,12 +19,17 @@ public class Constants {
 
     // Tipos de mensaje entre los agentes
     public enum AGENT_MESSAGE {
-        KILL, RECRUITE, CONVERT_TO_RESISTANCE, CONVERT_TO_SYSTEM, ADD_BONUS_ORACULO
+        KILL, RECRUITE, CONVERT_TO_RESISTANCE, CONVERT_TO_SYSTEM, ADD_BONUS_ORACULO, BATTLE, IS_IN_USE
     }
 
     // Tipos de respuesta del agente JoePublic
     public enum JOEPUBLIC_RESPONSE {
         YES, NO, ORACULO
+    }
+
+    // Tipos de respuesta en las batallas
+    public enum BATTLE_RESPONSE {
+        WIN, DEFEAT, TIE
     }
 
     public static final String NEO_NAME = "Neo";

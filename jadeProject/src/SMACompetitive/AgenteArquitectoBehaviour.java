@@ -60,12 +60,22 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case GET_RESISTANCE_MATCH:
                     // Duelo con la resistencia
-                    getResistanceMatch(sender);
+                    if (this.busyAgents.contains(sender.getName())) {
+                        // El arquitecto ha emparejado a este agente con otro
+                        agentInUse(sender);
+                    } else {
+                        getResistanceMatch(sender);
+                    }
                     break;
 
                 case GET_SYSTEM_MATCH:
                     // Duelo con el sistema
-                    getSystemMatch(sender);
+                    if (this.busyAgents.contains(sender.getName())) {
+                        // El arquitecto ha emparejado a este agente con otro
+                        agentInUse(sender);
+                    } else {
+                        getSystemMatch(sender);
+                    }
                     break;
 
                 case WIN:
@@ -148,11 +158,22 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         }
     }
 
+    private void agentInUse(AID sender) {
+        ACLMessage response = new ACLMessage(ACLMessage.CANCEL);
+        response.addReceiver(sender);
+        try {
+            response.setContentObject(Constants.AGENT_MESSAGE.IS_IN_USE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+    }
+
     /**
      * Se elimina a todos los agentes existentes
      */
     private void gameOver() {
-        ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
+        ACLMessage response = new ACLMessage(ACLMessage.INFORM);
         if (agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0) {
             // En este caso, ha ganado el sistema
             for (String agentName : agentMap.get(Constants.TEAM.SYSTEM).values()) {
@@ -258,7 +279,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     }
 
     private void killAgent(String agentName) {
-        ACLMessage killMessage = new ACLMessage(ACLMessage.REQUEST);
+        ACLMessage killMessage = new ACLMessage(ACLMessage.INFORM);
         try {
             killMessage.setContentObject(Constants.AGENT_MESSAGE.KILL);
         } catch (IOException e) {
