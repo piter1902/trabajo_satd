@@ -23,32 +23,16 @@ public class GameStatus implements Serializable {
         return oraculoFound;
     }
 
-    public void setOraculoFound(boolean oraculoFound) {
-        this.oraculoFound = oraculoFound;
-    }
-
     public int getnResistencia() {
         return nResistencia;
-    }
-
-    public void setnResistencia(int nResistencia) {
-        this.nResistencia = nResistencia;
     }
 
     public int getnSistema() {
         return nSistema;
     }
 
-    public void setnSistema(int nSistema) {
-        this.nSistema = nSistema;
-    }
-
     public int getnJoePublic() {
         return nJoePublic;
-    }
-
-    public void setnJoePublic(int nJoePublic) {
-        this.nJoePublic = nJoePublic;
     }
 
     @Override

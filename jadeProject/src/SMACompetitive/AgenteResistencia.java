@@ -19,18 +19,41 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
 
     private String name;
 
+    // Thread de peticiones tipo inform
+    private Thread informThread;
+
     @Override
     protected void setup() {
         super.setup();
         Object[] args = getArguments();
         this.name = (String) args[0];
         this.bonus = INITIAL_BONUS;
+        // Thread que escucha el mensaje de tipo INFORM
+        // TODO: Esto esta aqui un poco de gratis, igual es incompatible con los demas
+        informThread = new Thread(() -> {
+            // Esperamos el mensaje de kill
+            this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+            // Eliminamos al agente
+            this.takeDown();
+        });
+        informThread.start();
         addBehaviour(new AgenteResistenciaBehaviour(this.bonus, new AID((String) args[1], AID.ISGUID)));
+    }
+
+    @Override
+    protected void takeDown() {
+        super.takeDown();
+        try {
+            informThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
         public static final int WAITING_TIME = 100;
+        public static final int GAMESTATUS_WAITING_TIME = 1000;
 
         // Direccion del arquitecto
         private final AID arquitectAID;
@@ -57,78 +80,82 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
                 // Pedimos y recibimos el estado de la simulación
                 requestGameStatus();
                 GameStatus gameStatus = getGameStatusMessage();
-                int nJP = gameStatus.getnJoePublic();
-                int nRe = gameStatus.getnResistencia();
-                int nSi = gameStatus.getnSistema();
-                boolean oraculo = gameStatus.isOraculoFound();
 
-                // Comprobacion de REQUEST (para saber si quieren luchar con nosotros)
-                AID oponentAID = anyoneWantsToBattle();
-                // oponentAID sera null si no hay una batalla pendiente
-                if (oponentAID != null) {
-                    // Estamos en batalla por peticion de los otros
-                    sendBonusToOponent(oponentAID);
-                    // Esperamos la respuesta del agente oponente
-                    Constants.BATTLE_RESPONSE response = getBattleResponse();
-                    switch (response) {
-                        case WIN:
-                            // Recalcular bonus
-                            recalcBonus(1);
-                            break;
+                if (gameStatus != null) {
+                    // El juego no ha terminado
+                    int nJP = gameStatus.getnJoePublic();
+                    int nRe = gameStatus.getnResistencia();
+                    int nSi = gameStatus.getnSistema();
+                    boolean oraculo = gameStatus.isOraculoFound();
 
-                        case DEFEAT:
-                            // Hemos perdido, seremos eliminados por el arquitecto
-                            defeated();
-                            break;
+                    // Comprobacion de REQUEST (para saber si quieren luchar con nosotros)
+                    AID oponentAID = anyoneWantsToBattle();
+                    // oponentAID sera null si no hay una batalla pendiente
+                    if (oponentAID != null) {
+                        // Estamos en batalla por peticion de los otros
+                        sendBonusToOponent(oponentAID);
+                        // Esperamos la respuesta del agente oponente
+                        Constants.BATTLE_RESPONSE response = getBattleResponse();
+                        switch (response) {
+                            case WIN:
+                                // Recalcular bonus
+                                recalcBonus(1);
+                                break;
 
-                        case TIE:
-                            // Empate, recalcular bonus
-                            recalcBonus(-1);
-                            break;
-                    }
-                } else {
-                    // Acciones normales (tener en cuenta al orcaulo?)
-                    if (nJP > 0) {
-                        // Intentamos reclutar
-                        requestJoePublicAgent();
-                        String guid = getJoePublicID();
-                        // Peticion de reclutamiento al agente
-                        recluteAgent(guid);
-                        // Respuesta del agente JoePublic
-                        Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
-                        sendJoePublicResponse(guid, response);
-                        // TODO: Falta el modificar el bonus si se trata del agente NEO
-                    } else {
-                        // Habrá que luchar
-                        sendRequestForMatch();
-                        // Respuesta del arquitecto
-                        String agentName = getMatchedAgent();
-                        if (agentName != null) {
-                            // Hay emparejamiento
-                            int enemyBonus = getEnemyBonus(agentName);
-                            // Calculo de la batalla
-                            Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
-                            // Enviamos el resultado al arquitecto
-                            sendResultToArchitect(agentName, result);
-                            // Enviamos el resultado al otro agente
-                            sendResultToOponent(agentName, result);
-                            // Acciones a realizar
-                            switch (result) {
-                                case WIN:
-                                    // Recalcular bonus
-                                    recalcBonus(+1);
-                                    break;
-                                case DEFEAT:
-                                    // Esperamos la eliminacion
-                                    defeated();
-                                    break;
-                                case TIE:
-                                    // Empate
-                                    recalcBonus(-1);
-                                    break;
-                            }
+                            case DEFEAT:
+                                // Hemos perdido, seremos eliminados por el arquitecto
+                                defeated();
+                                break;
+
+                            case TIE:
+                                // Empate, recalcular bonus
+                                recalcBonus(-1);
+                                break;
                         }
-                        // else -> CANCEL
+                    } else {
+                        // Acciones normales (tener en cuenta al orcaulo?)
+                        if (nJP > 0) {
+                            // Intentamos reclutar
+                            requestJoePublicAgent();
+                            String guid = getJoePublicID();
+                            // Peticion de reclutamiento al agente
+                            recluteAgent(guid);
+                            // Respuesta del agente JoePublic
+                            Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
+                            sendJoePublicResponse(guid, response);
+                            // TODO: Falta el modificar el bonus si se trata del agente NEO
+                        } else {
+                            // Habrá que luchar
+                            sendRequestForMatch();
+                            // Respuesta del arquitecto
+                            String agentName = getMatchedAgent();
+                            if (agentName != null) {
+                                // Hay emparejamiento
+                                int enemyBonus = getEnemyBonus(agentName);
+                                // Calculo de la batalla
+                                Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
+                                // Enviamos el resultado al arquitecto
+                                sendResultToArchitect(agentName, result);
+                                // Enviamos el resultado al otro agente
+                                sendResultToOponent(agentName, result);
+                                // Acciones a realizar
+                                switch (result) {
+                                    case WIN:
+                                        // Recalcular bonus
+                                        recalcBonus(+1);
+                                        break;
+                                    case DEFEAT:
+                                        // Esperamos la eliminacion
+                                        defeated();
+                                        break;
+                                    case TIE:
+                                        // Empate
+                                        recalcBonus(-1);
+                                        break;
+                                }
+                            }
+                            // else -> CANCEL
+                        }
                     }
                 }
             }
@@ -366,15 +393,19 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
 
         private GameStatus getGameStatusMessage() {
             // Se espera la confirmacion de la petición
-            ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-            TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
-            GameStatus gameStatus = null;
-            try {
-                gameStatus = (GameStatus) aclMessage.getContentObject();
-            } catch (UnreadableException e) {
-                e.printStackTrace();
+            ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), GAMESTATUS_WAITING_TIME);
+            if (aclMessage != null) {
+                // Se ha recibido el mensaje
+                TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
+                GameStatus gameStatus = null;
+                try {
+                    gameStatus = (GameStatus) aclMessage.getContentObject();
+                } catch (UnreadableException e) {
+                    e.printStackTrace();
+                }
+                return gameStatus;
             }
-            return gameStatus;
+            return null;
         }
 
         private void requestGameStatus() {
