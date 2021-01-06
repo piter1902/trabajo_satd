@@ -5,11 +5,15 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static SMACompetitive.Constants.INITIAL_BONUS;
 import static SMACompetitive.Constants.MAX_BONUS;
 
 public class AgenteSistema extends Agent implements AgenteSimulacion {
+
+    private final static Logger log = LogManager.getLogger(AgenteSistema.class);
 
     protected int bonus;
 
@@ -31,9 +35,14 @@ public class AgenteSistema extends Agent implements AgenteSimulacion {
             ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
             TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
             // Eliminamos al agente
+            log.info("Agente Sistema " + getName() + " es eliminado");
             this.doDelete();
         });
         informThread.start();
+        // TODO: Se puede negociar donde esperar la barrera
+        ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
+        TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
+        log.info("Agente Sistema " + getName() + " sale de la barrera ");
         addBehaviour(new AgenteSistemaBehaviour(this.bonus, new AID((String) args[1], AID.ISGUID)));
     }
 

@@ -6,11 +6,15 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Random;
 
 class AgenteResistenciaBehaviour extends SimpleBehaviour {
+
+    private final static Logger log = LogManager.getLogger(AgenteResistenciaBehaviour.class);
 
     public static final int WAITING_TIME = 100;
     public static final int GAMESTATUS_WAITING_TIME = 1000;
@@ -50,9 +54,11 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                 // oponentAID sera null si no hay una batalla pendiente
                 if (oponentAID != null) {
                     // Estamos en batalla por peticion de los otros
+                    log.info("Agente Resistencia " + myAgent.getName() + " observa que " + oponentAID.getName() + " quiere luchar");
                     sendBonusToOpponent(oponentAID);
                     // Esperamos la respuesta del agente oponente
                     Constants.BATTLE_RESPONSE response = getBattleResponse();
+                    log.info("Agente Resistencia " + myAgent.getName() + ". Resultado batalla: " + response);
                     switch (response) {
                         case WIN:
                             // Recalcular bonus
@@ -72,6 +78,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                 } else {
                     // Acciones normales (tener en cuenta al orcaulo?)
                     if (nJP > 0) {
+                        log.info("Agente Resistencia " + myAgent.getName() + " comienza a reclutar");
                         // Intentamos reclutar
                         requestJoePublicAgent();
                         String guid = getJoePublicID();
@@ -81,15 +88,18 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                         Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
                         sendJoePublicResponse(guid, response);
                     } else {
+                        log.info("Agente Resistencia " + myAgent.getName() + " quiere luchar");
                         // Habrá que luchar
                         sendRequestForMatch();
                         // Respuesta del arquitecto
                         String agentName = getMatchedAgent();
                         if (agentName != null) {
+                            log.info("Agente Resistencia " + myAgent.getName() + " pide batalla a " + agentName);
                             // Hay emparejamiento
                             int enemyBonus = getEnemyBonus(agentName);
                             // Calculo de la batalla
                             Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
+                            log.info("Agente Resistencia " + myAgent.getName() + " resultado de batalla: " + result);
                             // Enviamos el resultado al arquitecto
                             sendResultToArchitect(agentName, result);
                             // Enviamos el resultado al otro agente
@@ -307,7 +317,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(new AID(guid, AID.ISGUID));
         try {
-            aclMessage.setContentObject(Constants.AGENT_MESSAGE.RECRUITE);
+            aclMessage.setContentObject(Constants.AGENT_MESSAGE.RESISTANCE_RECRUITE);
         } catch (IOException e) {
             e.printStackTrace();
         }

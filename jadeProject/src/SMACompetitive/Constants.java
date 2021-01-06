@@ -19,7 +19,7 @@ public class Constants {
 
     // Tipos de mensaje entre los agentes
     public enum AGENT_MESSAGE {
-        KILL, RECRUITE, CONVERT_TO_RESISTANCE, CONVERT_TO_SYSTEM, ADD_BONUS_ORACULO, BATTLE, IS_IN_USE
+        KILL, RESISTANCE_RECRUITE, SYSTEM_RECRUITE, CONVERT_TO_RESISTANCE, CONVERT_TO_SYSTEM, ADD_BONUS_ORACULO, BATTLE, IS_IN_USE
     }
 
     // Tipos de respuesta del agente JoePublic

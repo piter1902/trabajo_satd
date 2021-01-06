@@ -6,11 +6,15 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.*;
 
 class AgenteArquitectoBehaviour extends SimpleBehaviour {
+
+    private final static Logger log = LogManager.getLogger(AgenteArquitectoBehaviour.class);
 
 
     // Lista de agentes (las tuplas son: nombre de agente, direccionAID.string)
@@ -52,6 +56,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         }
 
         if (message != null) {
+            log.info("Mensaje recibido: " + message);
             switch (message) {
                 case GET_GAME_STATUS:
                     // Devolver el estado del juego
@@ -227,7 +232,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     private void convertPublicToSystem(String agentName) {
         ACLMessage response;
         convertJoePublic(agentName, Constants.TEAM.SYSTEM);
-        response = new ACLMessage(ACLMessage.REQUEST);
+        // TODO: Se ha modificado el tipo de mensaje a PROPOSE ya que JP solo espera ese tipo
+        response = new ACLMessage(ACLMessage.PROPOSE);
         response.addReceiver(new AID(agentName, AID.ISGUID));
         try {
             response.setContentObject(Constants.AGENT_MESSAGE.CONVERT_TO_SYSTEM);
@@ -239,7 +245,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
     private void convertPublicToResistencia(String agentName) {
         convertJoePublic(agentName, Constants.TEAM.RESISTANCE);
-        ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
+        // TODO: Se ha modificado el tipo de mensaje a PROPOSE ya que JP solo espera ese tipo
+        ACLMessage response = new ACLMessage(ACLMessage.PROPOSE);
         response.addReceiver(new AID(agentName, AID.ISGUID));
         try {
             response.setContentObject(Constants.AGENT_MESSAGE.CONVERT_TO_RESISTANCE);

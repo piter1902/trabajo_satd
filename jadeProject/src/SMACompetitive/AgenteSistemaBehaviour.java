@@ -310,7 +310,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(new AID(guid, AID.ISGUID));
         try {
-            aclMessage.setContentObject(Constants.AGENT_MESSAGE.RECRUITE);
+            aclMessage.setContentObject(Constants.AGENT_MESSAGE.SYSTEM_RECRUITE);
         } catch (IOException e) {
             e.printStackTrace();
         }
