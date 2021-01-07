@@ -3,16 +3,20 @@ package main.java.Timeout;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
+import main.java.SMACompetitive.AgenteResistencia;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TimeoutAdapter {
 
     // Numero máximo de reintentos de envíos
     private static final int MAX_COUNT = 10;
 
-    public static void sendWithTimeout(ACLMessage msg, Agent agent) {
+    private final static Logger log = Logger.getLogger(TimeoutAdapter.class.getName());
+
+    public static void sendWithTimeout(ACLMessage msg, Agent agent, String... context) {
         jade.util.leap.Iterator it = msg.getAllReceiver();
         List<AID> receptoresRestantes = new ArrayList<>();
         it.forEachRemaining(o -> receptoresRestantes.add((AID) o));
@@ -21,11 +25,11 @@ public class TimeoutAdapter {
             ACLMessage received = agent.blockingReceive(5000);
             if (received != null && received.getPerformative() == ACLMessage.CONFIRM) {
                 // Esto es el ACK
-                System.out.format("Agente %s: ACK received from %s\n", agent.getName(), received.getSender().getName());
+                log.severe(String.format("Agente %s: ACK received from %s . CONTEXT -------------> %s\n", agent.getName(), received.getSender().getName(), context[0]));
                 receptoresRestantes.remove(received.getSender());
             } else {
                 // Esto es otra cosa. Volvemos a intentarlo
-                System.out.format("Agente %s: ACK not received. Trying %d more times.\n", agent.getName(), count_sends);
+                log.warning(String.format("Agente %s: ACK not received. Trying %d more times. CONTEXT -------------> %s\n", agent.getName(), count_sends, context[0]));
                 count_sends--;
                 // Se envia el mensaje a los que no han enviado ACK
                 msg.clearAllReceiver();
@@ -49,13 +53,13 @@ public class TimeoutAdapter {
             if (received != null && received.getPerformative() == ACLMessage.CONFIRM) {
                 // Esto es el ACK
                 AID sender = received.getSender();
-                System.out.format("Agente %s: ACK received from %s\n", agent.getName(), sender.getName());
+                log.severe(String.format("Agente %s: ACK received from %s\n", agent.getName(), received.getSender().getName()));
                 if (receptoresRestantes1.contains(sender)) {
                     receptoresRestantes1.remove(sender);
                 } else receptoresRestantes2.remove(sender);
             } else {
                 // Esto es otra cosa. Volvemos a intentarlo
-                System.out.format("Agente %s: ACK not received. Trying %d more times.\n", agent.getName(), count_sends);
+                log.warning(String.format("Agente %s: ACK not received. Trying %d more times.\n", agent.getName(), count_sends));
                 count_sends--;
                 // Se envia el mensaje a los que no han enviado ACK
                 msg1.clearAllReceiver();

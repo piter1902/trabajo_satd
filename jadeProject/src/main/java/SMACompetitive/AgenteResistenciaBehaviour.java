@@ -7,6 +7,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
+import javax.crypto.spec.OAEPParameterSpec;
 import java.io.IOException;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -16,7 +17,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private final static Logger log = Logger.getLogger(AgenteResistenciaBehaviour.class.getName());
 
     public static final int WAITING_TIME = 100;
-    public static final int GAMESTATUS_WAITING_TIME = 1000;
+    public static final int GAMESTATUS_WAITING_TIME = 5000;
 
     // Direccion del arquitecto
     private final AID arquitectAID;
@@ -145,7 +146,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "SENDING BATTLE RESULTS TO " + agentName);
     }
 
     private void sendResultToArchitect(String agentName, Constants.BATTLE_RESPONSE result) {
@@ -169,7 +170,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         }
         // Se envía el agente a ELIMINAR
         aclMessage.setContent(loser);
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent,"SENDING BATTLE RESULTS TO ARCHITECT" );
     }
 
     private Constants.BATTLE_RESPONSE battleIntern(int enemyBonus) {
@@ -190,7 +191,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private int getEnemyBonus(String agentName) {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(new AID(agentName, AID.ISGUID));
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "REQUEST BONUS TO " + agentName);
         ACLMessage response = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
         TimeoutAdapter.sendACKBack(response.getSender(), this.myAgent);
         int enemyBonus = Integer.parseInt(response.getContent());
@@ -223,7 +224,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "REQUEST MATCH");
     }
 
     private void defeated() {
@@ -254,7 +255,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "SENDING BONUS INFO TO " + oponentAID.getName());
     }
 
     private boolean checkGameOver() {
@@ -297,7 +298,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
             e.printStackTrace();
         }
         aclMessage.setContent(guid);
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "JP DECISION TO ARCHITECT: " + type);
     }
 
     private Constants.JOEPUBLIC_RESPONSE getJoePublicResponse() {
@@ -320,7 +321,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "RECLUTE AGENT " + guid);
     }
 
     private String getJoePublicID() {
@@ -337,7 +338,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "REQUEST JP TO ARCHITECT");
     }
 
     private AID anyoneWantsToBattle() {
@@ -365,6 +366,8 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                 e.printStackTrace();
             }
             return gameStatus;
+        }else{
+            log.warning("Agente " + myAgent.getName() + " NO RECIBE ESTADO DE PARTIDA ...") ;
         }
         return null;
     }
@@ -377,7 +380,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "GAME STATUS TO ARCHITECT");
     }
 
     @Override

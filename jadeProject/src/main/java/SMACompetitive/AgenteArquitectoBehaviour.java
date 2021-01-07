@@ -56,7 +56,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         }
 
         if (message != null) {
-            log.info("Mensaje recibido: " + message);
+            log.info("Mensaje recibido: " + message + " por -------> " + sender);
             switch (message) {
                 case GET_GAME_STATUS:
                     // Devolver el estado del juego
@@ -171,7 +171,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "AGENT IN USE TO " + sender.getName());
     }
 
     /**
@@ -199,7 +199,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "GAME OVER ...");
     }
 
     private void oraculoFound(String agentName, Constants.TEAM team) {
@@ -225,7 +225,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+            TimeoutAdapter.sendWithTimeout(response, this.myAgent, "ORACLE FOUND ...");
         }
     }
 
@@ -240,7 +240,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "CONVERT PUBLIC TO SYSTEM TO " + agentName);
     }
 
     private void convertPublicToResistencia(String agentName) {
@@ -253,7 +253,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "CONVERT PUBLIC TO RESISTANCE TO " + agentName);
     }
 
     private void convertJoePublic(String JPName, Constants.TEAM team) {
@@ -268,7 +268,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
         response.addReceiver(sender);
         response.setContent(joePublicAgent);
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent,"GET JOEPULIC FROM " + sender.getName());
     }
 
     private void battleEnd(String agentName, String senderName) {
@@ -300,7 +300,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             removeAgentFromMap(agentName, Constants.TEAM.SYSTEM);
         }
         // Se envia el mensaje
-        TimeoutAdapter.sendWithTimeout(killMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(killMessage, this.myAgent, "KILL AGENT " + agentName);
     }
 
     private void removeAgentFromMap(String agentName, Constants.TEAM team) {
@@ -341,7 +341,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
         response.addReceiver(sender);
         response.setContent(resistanceAgent);
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "GET AGENT MATCH " + sender.getName());
     }
 
     private String lookupAgent(Constants.TEAM team) {
@@ -387,7 +387,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "SEND GAME STATUS TO " + sender.getName());
     }
 
     @Override

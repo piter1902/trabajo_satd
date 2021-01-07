@@ -56,7 +56,7 @@ public class AgenteArquitecto extends Agent {
         for (String name : agentsName) {
             aclMessage.addReceiver(new AID(name, AID.ISGUID));
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this);
+        TimeoutAdapter.sendWithTimeout(aclMessage, this, "OPENING BARRIER");
     }
 
     /**
