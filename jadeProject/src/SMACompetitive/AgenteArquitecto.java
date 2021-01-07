@@ -29,6 +29,7 @@ public class AgenteArquitecto extends Agent {
 
     @Override
     protected void setup() {
+        super.setup();
         systemMap = new HashMap<>();
         resistanceMap = new HashMap<>();
         joePublicMap = new HashMap<>();
@@ -37,11 +38,11 @@ public class AgenteArquitecto extends Agent {
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
-        super.setup();
         //Agents barrier
         sendStartMessageToAgents();
         // Obtain architect name
         this.architectName = getName();
+        System.out.println("----------------> " + architectName);
         this.addBehaviour(new AgenteArquitectoBehaviour(resistanceMap, systemMap, joePublicMap));
     }
 

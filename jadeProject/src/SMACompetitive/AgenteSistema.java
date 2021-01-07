@@ -43,7 +43,7 @@ public class AgenteSistema extends Agent implements AgenteSimulacion {
         ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
         log.info("Agente Sistema " + getName() + " sale de la barrera ");
-        addBehaviour(new AgenteSistemaBehaviour(this.bonus, new AID((String) args[1], AID.ISGUID)));
+        addBehaviour(new AgenteSistemaBehaviour(this.bonus, aclMessage.getSender()));
     }
 
     @Override

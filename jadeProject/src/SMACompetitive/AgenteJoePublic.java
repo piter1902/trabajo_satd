@@ -38,8 +38,6 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
         this.probabilityToConvertResistance = random.nextInt(100);
         random = new Random(System.nanoTime());
         this.probabilityToConvertSystem = random.nextInt(100);
-        // Obtain architect AID
-        architectAID = (AID) args[0];
         // Thread que escucha el mensaje de tipo INFORM
         // TODO: Esto esta aqui un poco de gratis, igual es incompatible con los demas
         informThread = new Thread(() -> {
@@ -54,6 +52,8 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
         // TODO: Se puede negociar donde esperar la barrera
         ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
+        // Obtain architect AID
+        architectAID = aclMessage.getSender();
         log.info("Agente JoePublic " + getName() + " sale de la barrera ");
         addBehaviour(new AgenteJoePublicBehaviour(probabilityToConvertResistance, probabilityToConvertSystem));
     }
