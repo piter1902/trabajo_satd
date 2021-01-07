@@ -1,16 +1,15 @@
 package main.java.SMACompetitive;
 
 import main.java.Timeout.TimeoutAdapter;
-import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.util.logging.Logger;
 
 public class AgenteResistencia extends Agent implements AgenteSimulacion {
 
-    private final static Logger log = LogManager.getLogger(AgenteResistencia.class);
+    private final static Logger log = Logger.getLogger(AgenteResistencia.class.getName());
 
     protected int bonus;
 

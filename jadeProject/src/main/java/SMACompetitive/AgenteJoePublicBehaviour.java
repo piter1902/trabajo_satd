@@ -6,17 +6,16 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import static main.java.SMACompetitive.Constants.INITIAL_BONUS;
 
 public class AgenteJoePublicBehaviour extends SimpleBehaviour {
 
-    private final static Logger log = LogManager.getLogger(AgenteJoePublicBehaviour.class);
+    private final static Logger log = Logger.getLogger(AgenteJoePublicBehaviour.class.getName());
 
     // Probabilities of conversion
     private int probabilityResistance;

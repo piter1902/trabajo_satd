@@ -6,15 +6,13 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.util.Random;
+import java.util.logging.Logger;
 
 class AgenteSistemaBehaviour extends SimpleBehaviour {
 
-    private final static Logger log = LogManager.getLogger(AgenteSistemaBehaviour.class);
+    private final static Logger log = Logger.getLogger(AgenteSistemaBehaviour.class.getName());
 
     public static final int WAITING_TIME = 100;
     public static final int GAMESTATUS_WAITING_TIME = 1000;
@@ -263,6 +261,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     }
 
     private boolean checkGameOver() {
+        log.info("Agente Sistema " + myAgent.getName() + " comprueba fin de juego");
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM), WAITING_TIME);
         boolean isGameOver = aclMessage != null;
         if (isGameOver) {
@@ -375,6 +374,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     }
 
     private void requestGameStatus() {
+        log.info("Agente Sistema " + myAgent.getName() + " pide estado de sistema");
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         aclMessage.addReceiver(arquitectAID);
         try {

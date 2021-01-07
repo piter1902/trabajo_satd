@@ -6,15 +6,14 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.logging.Logger;
 
 class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
-    private final static Logger log = LogManager.getLogger(AgenteResistenciaBehaviour.class);
+    private final static Logger log = Logger.getLogger(AgenteResistenciaBehaviour.class.getName());
 
     public static final int WAITING_TIME = 100;
     public static final int GAMESTATUS_WAITING_TIME = 1000;

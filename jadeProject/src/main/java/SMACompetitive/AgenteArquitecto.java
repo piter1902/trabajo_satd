@@ -8,13 +8,12 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import java.util.*;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class AgenteArquitecto extends Agent {
 
-    private final static Logger log = LogManager.getLogger(AgenteArquitecto.class);
+    private final static Logger log = Logger.getLogger(AgenteArquitecto.class.getName());
 
     private String architectName;
 
@@ -43,12 +42,6 @@ public class AgenteArquitecto extends Agent {
         }
         //Agents barrier
         sendStartMessageToAgents();
-<<<<<<< Updated upstream:jadeProject/src/SMACompetitive/AgenteArquitecto.java
-        // Obtain architect name
-        this.architectName = getName();
-        System.out.println("----------------> " + architectName);
-=======
->>>>>>> Stashed changes:jadeProject/src/main/java/SMACompetitive/AgenteArquitecto.java
         this.addBehaviour(new AgenteArquitectoBehaviour(resistanceMap, systemMap, joePublicMap));
     }
 
@@ -90,7 +83,7 @@ public class AgenteArquitecto extends Agent {
     }
 
     private void crearAgentes() throws StaleProxyException {
-        log.info("Comienza creacion de main.java.agentes ... ");
+        log.info("Comienza creacion de agentes ... ");
         createResistanceAgents();
         createSystemAgents();
         createJoePublicAgents();

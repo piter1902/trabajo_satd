@@ -5,14 +5,13 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class AgenteJoePublic extends Agent implements AgenteSimulacion {
 
-    private final static Logger log = LogManager.getLogger(AgenteJoePublic.class);
+    private final static Logger log = Logger.getLogger(AgenteJoePublic.class.getName());
 
     // Probability to be converted to a resistance agent
     private int probabilityToConvertResistance;

@@ -6,15 +6,15 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
-    private final static Logger log = LogManager.getLogger(AgenteArquitectoBehaviour.class);
+    private final static Logger log = Logger.getLogger(AgenteArquitectoBehaviour.class.getName());
 
 
     // Lista de main.java.agentes (las tuplas son: nombre de agente, direccionAID.string)

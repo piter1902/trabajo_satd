@@ -5,12 +5,12 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.util.logging.Logger;
 
 public class AgenteSistema extends Agent implements AgenteSimulacion {
 
-    private final static Logger log = LogManager.getLogger(AgenteSistema.class);
+    private final static Logger log = Logger.getLogger(AgenteSistema.class.getName());
 
     protected int bonus;
 

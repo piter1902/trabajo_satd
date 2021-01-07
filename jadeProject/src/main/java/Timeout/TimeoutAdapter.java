@@ -18,7 +18,7 @@ public class TimeoutAdapter {
         it.forEachRemaining(o -> receptoresRestantes.add((AID) o));
         int count_sends = MAX_COUNT;
         do {
-            ACLMessage received = agent.blockingReceive(1000);
+            ACLMessage received = agent.blockingReceive(5000);
             if (received != null && received.getPerformative() == ACLMessage.CONFIRM) {
                 // Esto es el ACK
                 System.out.format("Agente %s: ACK received from %s\n", agent.getName(), received.getSender().getName());
