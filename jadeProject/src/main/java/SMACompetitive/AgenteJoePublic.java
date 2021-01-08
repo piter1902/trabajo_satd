@@ -1,10 +1,10 @@
 package main.java.SMACompetitive;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import main.java.Timeout.TimeoutAdapter;
 
 import java.util.Random;
 import java.util.logging.Logger;
@@ -48,6 +48,7 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
             this.doDelete();
         });
         // Agent barrier
+        informThread.start();
         // TODO: Se puede negociar donde esperar la barrera
         ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);

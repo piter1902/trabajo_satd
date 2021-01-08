@@ -1,12 +1,13 @@
 package main.java.SMACompetitive;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import main.java.Timeout.TimeoutAdapter;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -17,7 +18,7 @@ public class AgenteArquitecto extends Agent {
 
     private String architectName;
 
-    private static final int NUMBER_JOEPUBLIC = 10;
+    private static final int NUMBER_JOEPUBLIC = 1;
 
     //  System Agents
     private Map<String, String> systemMap;
@@ -40,7 +41,7 @@ public class AgenteArquitecto extends Agent {
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
-        //Agents barrier
+        // Agents barrier
         sendStartMessageToAgents();
         this.addBehaviour(new AgenteArquitectoBehaviour(resistanceMap, systemMap, joePublicMap));
     }
@@ -85,7 +86,7 @@ public class AgenteArquitecto extends Agent {
     private void crearAgentes() throws StaleProxyException {
         log.info("Comienza creacion de agentes ... ");
         createResistanceAgents();
-        createSystemAgents();
+//        createSystemAgents();
         createJoePublicAgents();
     }
 
@@ -100,15 +101,15 @@ public class AgenteArquitecto extends Agent {
     }
 
     private void createSystemAgents() throws StaleProxyException {
-        systemMap.put("Smith_KY", generateNewAgent(Constants.SMITH_NAME, AgenteSmith.class, Constants.SMITH_NAME, architectName));
+        systemMap.put(Constants.SMITH_NAME, generateNewAgent(Constants.SMITH_NAME, AgenteSmith.class, Constants.SMITH_NAME, architectName));
         systemMap.put("Torrente_KY", generateNewAgent("Torrente", AgenteSistema.class, "Torrente", architectName));
         systemMap.put("Terminator_KY", generateNewAgent("Terminator", AgenteSistema.class, "Terminator", architectName));
     }
 
     private void createResistanceAgents() throws StaleProxyException {
-        resistanceMap.put("Neo_KY", generateNewAgent(Constants.NEO_NAME, AgenteNeo.class, Constants.NEO_NAME, architectName));
-        resistanceMap.put("Morfeo_KY", generateNewAgent("Morfeo", AgenteResistencia.class, "Morfeo", architectName));
-        resistanceMap.put("Triniti_KY", generateNewAgent("Triniti", AgenteResistencia.class, "Triniti", architectName));
+        resistanceMap.put(Constants.NEO_NAME, generateNewAgent(Constants.NEO_NAME, AgenteNeo.class, Constants.NEO_NAME, architectName));
+//        resistanceMap.put("Morfeo_KY", generateNewAgent("Morfeo", AgenteResistencia.class, "Morfeo", architectName));
+//        resistanceMap.put("Triniti_KY", generateNewAgent("Triniti", AgenteResistencia.class, "Triniti", architectName));
 
     }
 

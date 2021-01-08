@@ -7,5 +7,8 @@ public class AgenteOraculo extends AgenteJoePublic {
         super.setup();
     }
 
-
+    @Override
+    protected void takeDown() {
+        super.takeDown();
+    }
 }

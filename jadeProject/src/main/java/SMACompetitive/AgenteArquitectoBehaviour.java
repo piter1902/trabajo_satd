@@ -1,12 +1,11 @@
 package main.java.SMACompetitive;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-
+import main.java.Timeout.TimeoutAdapter;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,19 +47,20 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         AID sender = aclMessage.getSender();
         TimeoutAdapter.sendACKBack(sender, this.myAgent);
 
-        Constants.ARQUITECT_MESSAGE message = null;
+        GameMessage gameMessage = null;
         try {
-            message = (Constants.ARQUITECT_MESSAGE) aclMessage.getContentObject();
+            gameMessage = (GameMessage) aclMessage.getContentObject();
         } catch (UnreadableException e) {
             e.printStackTrace();
         }
 
-        if (message != null) {
+        if (gameMessage != null) {
+            Constants.ARQUITECT_MESSAGE message = (Constants.ARQUITECT_MESSAGE) gameMessage.getMessage();
             log.info("Mensaje recibido: " + message + " por -------> " + sender);
             switch (message) {
                 case GET_GAME_STATUS:
                     // Devolver el estado del juego
-                    getGameStatus(aclMessage, sender);
+                    getGameStatus(sender);
                     break;
 
                 case GET_RESISTANCE_MATCH:
@@ -86,14 +86,14 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                 case WIN:
                     // Alguien ha ganado la batalla [win()]
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
-                    String agentName = aclMessage.getContent();
+                    String agentName = gameMessage.getContent();
                     battleEnd(agentName, sender.getName());
                     break;
 
                 case TIE:
                     // Ha habido empate [tie()]
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     battleEndTie(agentName, sender.getName());
                     break;
 
@@ -105,7 +105,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                 case CONVERT_JOEPUBLIC_TO_RESISTANCE:
                     //Añadir el agente de tipo JoePublic a resistencia
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     convertPublicToResistencia(agentName);
                     ACLMessage response;
                     break;
@@ -113,13 +113,13 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                 case CONVERT_JOEPUBLIC_TO_SYSTEM:
                     // Añadir el agente de tipo JoePublic a sistema
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     convertPublicToSystem(agentName);
                     break;
 
                 case NOT_CONVERTED:
                     // Los main.java.agentes de la resistencia no matan a los main.java.agentes JoePublic. Se libera
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     // Lo liberamos
                     busyAgents.remove(agentName);
                     break;
@@ -127,20 +127,20 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                 case ORACULO_FOUND_RESISTANCE:
                     // El equipo RESISTANCE ha encontrado al oraculo
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.RESISTANCE);
                     break;
 
                 case ORACULO_FOUND_SYSTEM:
                     // El equipo SYSTEM ha encontrado al oraculo
                     // TODO: Comprobar si esto funciona si no -> enviar una tupla
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.SYSTEM);
                     break;
 
                 case KILL_JOEPUBLIC:
                     // Mensaje de agente del sistema que indica que se debe eliminar un JoePublic
-                    agentName = aclMessage.getContent();
+                    agentName = gameMessage.getContent();
                     removeAgentFromMap(agentName, Constants.TEAM.JOEPUBLIC);
                     busyAgents.remove(agentName);
                     killAgent(agentName);
@@ -155,10 +155,11 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             // message is null -> Error en el mensaje -> Se descarta
         }
         // Calculo del nuevo estado (si el numero de main.java.agentes de alguno de los dos bandos es 0)
-        gameOver = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0
-                || agentMap.get(Constants.TEAM.SYSTEM).entrySet().size() == 0;
+//        gameOver = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0
+//                || agentMap.get(Constants.TEAM.SYSTEM).entrySet().size() == 0;
+        // TODO: Cambiar esto por lo comentado de arriba
+        gameOver = agentMap.get(Constants.TEAM.JOEPUBLIC).entrySet().size() == 0;
         if (gameOver) {
-            // TODO: Hacer cosas (o creamos otro behaviour?)
             gameOver();
         }
     }
@@ -167,7 +168,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         ACLMessage response = new ACLMessage(ACLMessage.CANCEL);
         response.addReceiver(sender);
         try {
-            response.setContentObject(Constants.AGENT_MESSAGE.IS_IN_USE);
+            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.IS_IN_USE);
+            response.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -195,7 +197,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             response.addReceiver(new AID(agentName, AID.ISGUID));
         }
         try {
-            response.setContentObject(Constants.AGENT_MESSAGE.KILL);
+            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.KILL);
+            response.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -221,7 +224,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             response = new ACLMessage(ACLMessage.AGREE);
             response.addReceiver(new AID(lider, AID.ISGUID));
             try {
-                response.setContentObject(Constants.AGENT_MESSAGE.ADD_BONUS_ORACULO);
+                GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.ADD_BONUS_ORACULO);
+                response.setContentObject(gm);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -236,7 +240,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         response = new ACLMessage(ACLMessage.PROPOSE);
         response.addReceiver(new AID(agentName, AID.ISGUID));
         try {
-            response.setContentObject(Constants.AGENT_MESSAGE.CONVERT_TO_SYSTEM);
+            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.CONVERT_TO_SYSTEM);
+            response.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -249,7 +254,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         ACLMessage response = new ACLMessage(ACLMessage.PROPOSE);
         response.addReceiver(new AID(agentName, AID.ISGUID));
         try {
-            response.setContentObject(Constants.AGENT_MESSAGE.CONVERT_TO_RESISTANCE);
+            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.CONVERT_TO_RESISTANCE);
+            response.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -267,8 +273,13 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         this.busyAgents.add(joePublicAgent);
         ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
         response.addReceiver(sender);
-        response.setContent(joePublicAgent);
-        TimeoutAdapter.sendWithTimeout(response, this.myAgent,"GET JOEPULIC FROM " + sender.getName());
+        GameMessage gm = new GameMessage(null, joePublicAgent);
+        try {
+            response.setContentObject(gm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "GET JOEPULIC FROM " + sender.getName());
     }
 
     private void battleEnd(String agentName, String senderName) {
@@ -288,7 +299,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     private void killAgent(String agentName) {
         ACLMessage killMessage = new ACLMessage(ACLMessage.INFORM);
         try {
-            killMessage.setContentObject(Constants.AGENT_MESSAGE.KILL);
+            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.KILL);
+            killMessage.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -340,7 +352,12 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     private void getAgentMatch(AID sender, String resistanceAgent) {
         ACLMessage response = new ACLMessage(ACLMessage.REQUEST);
         response.addReceiver(sender);
-        response.setContent(resistanceAgent);
+        GameMessage gm = new GameMessage(null, resistanceAgent);
+        try {
+            response.setContentObject(gm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         TimeoutAdapter.sendWithTimeout(response, this.myAgent, "GET AGENT MATCH " + sender.getName());
     }
 
@@ -375,7 +392,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         return agentName;
     }
 
-    private void getGameStatus(ACLMessage aclMessage, AID sender) {
+    private void getGameStatus(AID sender) {
         int nResis = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size();
         int nSist = agentMap.get(Constants.TEAM.SYSTEM).entrySet().size();
         int nJoeP = agentMap.get(Constants.TEAM.JOEPUBLIC).entrySet().size();
@@ -387,7 +404,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "SEND GAME STATUS TO " + sender.getName());
+        TimeoutAdapter.sendWithTimeout(response, this.myAgent, "SEND GAME STATUS TO " + sender.getName());
     }
 
     @Override

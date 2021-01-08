@@ -3,7 +3,7 @@ package main.java.Timeout;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
-import main.java.SMACompetitive.AgenteResistencia;
+import jade.lang.acl.MessageTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,11 @@ public class TimeoutAdapter {
         List<AID> receptoresRestantes = new ArrayList<>();
         it.forEachRemaining(o -> receptoresRestantes.add((AID) o));
         int count_sends = MAX_COUNT;
+        // TODO: Enviamos antes de esperar una respuesta
+        agent.send(msg);
         do {
-            ACLMessage received = agent.blockingReceive(5000);
-            if (received != null && received.getPerformative() == ACLMessage.CONFIRM) {
+            ACLMessage received = agent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), 5000);
+            if (received != null) {
                 // Esto es el ACK
                 log.severe(String.format("Agente %s: ACK received from %s . CONTEXT -------------> %s\n", agent.getName(), received.getSender().getName(), context[0]));
                 receptoresRestantes.remove(received.getSender());

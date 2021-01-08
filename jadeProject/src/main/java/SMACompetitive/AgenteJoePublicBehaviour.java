@@ -1,11 +1,11 @@
 package main.java.SMACompetitive;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import main.java.Timeout.TimeoutAdapter;
 
 import java.io.IOException;
 import java.util.Random;
@@ -18,8 +18,8 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
     private final static Logger log = Logger.getLogger(AgenteJoePublicBehaviour.class.getName());
 
     // Probabilities of conversion
-    private int probabilityResistance;
-    private int probabilitySystem;
+    private final int probabilityResistance;
+    private final int probabilitySystem;
 
 
     public AgenteJoePublicBehaviour(int probabilityResistance, int probabilitySystem) {
@@ -38,7 +38,8 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
 
         Constants.AGENT_MESSAGE message = null;
         try {
-            message = (Constants.AGENT_MESSAGE) aclMessage.getContentObject();
+            GameMessage gm = (GameMessage) aclMessage.getContentObject();
+            message = (Constants.AGENT_MESSAGE) gm.getMessage();
         } catch (UnreadableException e) {
             e.printStackTrace();
         }
@@ -78,10 +79,11 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
     }
 
     private void sendResponseToConverter(Constants.JOEPUBLIC_RESPONSE decision, AID sender) {
-        ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
+        ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(sender);
         try {
-            aclMessage.setContentObject(decision);
+            GameMessage gm = new GameMessage(decision);
+            aclMessage.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
