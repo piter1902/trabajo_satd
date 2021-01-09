@@ -60,21 +60,26 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
                 case CONVERT_TO_RESISTANCE:
                     log.info("Agente JP " + myAgent.getName() + " convirtiendo a RESISTENCIA");
                     // Cambiar comportamiento a resistencia
-                    // TODO: Tiene sentido pero no se si es asi
-                    myAgent.addBehaviour(new AgenteResistenciaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
-                    myAgent.removeBehaviour(this);
+                    changeBehaviour(Constants.TEAM.RESISTANCE);
                     break;
                 case CONVERT_TO_SYSTEM:
                     // Cambiar comportamiento a sistema
                     log.info("Agente JP " + myAgent.getName() + " convirtiendo a SISTEMA");
-
-                    // TODO: Tiene sentido pero no se si es asi
-                    myAgent.addBehaviour(new AgenteSistemaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
-                    myAgent.removeBehaviour(this);
+                    changeBehaviour(Constants.TEAM.SYSTEM);
                     break;
             }
         } else {
             // Mensaje erróneo -> es descartado
+        }
+    }
+
+    private void changeBehaviour(Constants.TEAM team) {
+        if (team == Constants.TEAM.RESISTANCE){
+            myAgent.addBehaviour(new AgenteResistenciaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
+            myAgent.removeBehaviour(this);
+        }else {
+            myAgent.addBehaviour(new AgenteSistemaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
+            myAgent.removeBehaviour(this);
         }
     }
 
