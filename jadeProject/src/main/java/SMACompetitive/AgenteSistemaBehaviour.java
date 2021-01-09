@@ -379,6 +379,8 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
 
     private void requestJoePublicAgent() {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
+        //TODO: Lo hago aqui para simplificar codigo
+        SimulationStats.getInstance().increaseNumberOfSystemRecluitments();
         aclMessage.addReceiver(arquitectAID);
         try {
             GameMessage gm = new GameMessage(Constants.ARQUITECT_MESSAGE.GET_JOEPUBLIC_AGENT);

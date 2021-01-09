@@ -24,6 +24,8 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     private boolean gameOver;
     // Flag de oraculo
     private boolean oraculoFound;
+    //Stats singleton
+    private SimulationStats stats =  SimulationStats.getInstance();
 
     public AgenteArquitectoBehaviour(Map<String, String> agentsResistencia,
                                      Map<String, String> agentsSistema,
@@ -60,11 +62,13 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             switch (message) {
                 case GET_GAME_STATUS:
                     // Devolver el estado del juego
+                    stats.increasNumberOfGetGameStatus();
                     getGameStatus(sender);
                     break;
 
                 case GET_RESISTANCE_MATCH:
                     // Duelo con la resistencia
+                    stats.increaseNumberOfBattlesSystem();
                     if (this.busyAgents.contains(sender.getName())) {
                         // El arquitecto ha emparejado a este agente con otro
                         agentInUse(sender);
@@ -75,6 +79,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case GET_SYSTEM_MATCH:
                     // Duelo con el sistema
+                    stats.increaseNumberOfBattlesResistance();
                     if (this.busyAgents.contains(sender.getName())) {
                         // El arquitecto ha emparejado a este agente con otro
                         agentInUse(sender);
@@ -85,19 +90,34 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case WIN:
                     // Alguien ha ganado la batalla [win()]
-                    String agentName = gameMessage.getContent();
-                    battleEnd(agentName, sender.getName());
+                    String loser = gameMessage.getContent();
+                    String winner = sender.getName();
+                    // Obtain the team of the winner
+                    if (agentMap.get(Constants.TEAM.RESISTANCE).get(loser) != null){
+                        stats.increaseNumberOfSystemWins();
+                    }else {
+                        stats.increaseNumberOfResistanceWins();
+                    }
+                    battleEnd(loser, winner);
                     break;
 
                 case DEFEAT:
                     // Alguien ha perdido la batalla [defeat()]
-                    agentName = gameMessage.getContent();
-                    battleEnd(sender.getName(), agentName);
+                    winner = gameMessage.getContent();
+                    loser = sender.getName();
+                    // Obtain the team of the winner
+                    if (agentMap.get(Constants.TEAM.RESISTANCE).get(winner) != null){
+                        stats.increaseNumberOfResistanceWins();
+                    }else {
+                        stats.increaseNumberOfSystemWins();
+                    }
+                    battleEnd(loser,winner);
                     break;
 
                 case TIE:
                     // Ha habido empate [tie()]
-                    agentName = gameMessage.getContent();
+                    stats.increaseNumberOfTies();
+                    String agentName = gameMessage.getContent();
                     battleEndTie(agentName, sender.getName());
                     break;
 
@@ -108,6 +128,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case CONVERT_JOEPUBLIC_TO_RESISTANCE:
                     //Añadir el agente de tipo JoePublic a resistencia
+                    stats.increaseNumberOfResistanceConversions();
                     agentName = gameMessage.getContent();
                     convertPublicToResistencia(agentName);
                     ACLMessage response;
@@ -115,6 +136,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case CONVERT_JOEPUBLIC_TO_SYSTEM:
                     // Añadir el agente de tipo JoePublic a sistema
+                    stats.increaseNumberOfSystemConversions();
                     agentName = gameMessage.getContent();
                     convertPublicToSystem(agentName);
                     break;
@@ -128,18 +150,25 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case ORACULO_FOUND_RESISTANCE:
                     // El equipo RESISTANCE ha encontrado al oraculo
+                    stats.setOraculoFound(true);
+                    stats.setTeamOraculoFound(Constants.TEAM.RESISTANCE);
+                    stats.setNameOfOraculoDiscover(sender.getName());
                     agentName = gameMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.RESISTANCE);
                     break;
 
                 case ORACULO_FOUND_SYSTEM:
                     // El equipo SYSTEM ha encontrado al oraculo
+                    stats.setOraculoFound(true);
+                    stats.setTeamOraculoFound(Constants.TEAM.SYSTEM);
+                    stats.setNameOfOraculoDiscover(sender.getName());
                     agentName = gameMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.SYSTEM);
                     break;
 
                 case KILL_JOEPUBLIC:
                     // Mensaje de agente del sistema que indica que se debe eliminar un JoePublic
+                    stats.increaseNumberOfSystemJPKills();
                     agentName = gameMessage.getContent();
                     removeAgentFromMap(agentName, Constants.TEAM.JOEPUBLIC);
                     busyAgents.remove(agentName);
@@ -161,7 +190,20 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 //        gameOver = agentMap.get(Constants.TEAM.JOEPUBLIC).entrySet().size() == 0;
         if (gameOver) {
             gameOver();
+            // Se muestran resultados
+            printMatrixStats();
         }
+    }
+
+    /**
+     * Muestra estadísticas del juego a partir del singletone SimulationStat
+     */
+    private void printMatrixStats() {
+        // Estos valores se deben aplicar al finalizar el juego
+        stats.setNumberAgentsJoePublic(agentMap.get(Constants.TEAM.JOEPUBLIC).size());
+        stats.setNumberAgentsResistance(agentMap.get(Constants.TEAM.RESISTANCE).size());
+        stats.setNumberAgentsSystem(agentMap.get(Constants.TEAM.SYSTEM).size());
+        stats.printStats();
     }
 
     private void agentInUse(AID sender) {
@@ -183,13 +225,11 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         ACLMessage response = new ACLMessage(ACLMessage.INFORM);
         if (agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0) {
             // En este caso, ha ganado el sistema
-            log.info("-----> Ha ganado el sistema");
             for (String agentName : agentMap.get(Constants.TEAM.SYSTEM).values()) {
                 response.addReceiver(new AID(agentName, AID.ISGUID));
             }
         } else {
             // En caso contrario, ha ganado la resistencia
-            log.info("-----> Ha ganado la resistencia");
             for (String agentName : agentMap.get(Constants.TEAM.RESISTANCE).values()) {
                 response.addReceiver(new AID(agentName, AID.ISGUID));
             }
