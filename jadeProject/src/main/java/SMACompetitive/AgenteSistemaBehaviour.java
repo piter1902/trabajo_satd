@@ -81,12 +81,13 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
                         log.info("Agente Sistema " + myAgent.getName() + " comienza a reclutar");
                         requestJoePublicAgent();
                         String guid = getJoePublicID();
-                        // Peticion de reclutamiento al agente
-                        recluteAgent(guid);
-                        // Respuesta del agente JoePublic
-                        Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
-                        sendJoePublicResponse(guid, response);
-                        // TODO: Falta el modificar el bonus si se trata del agente NEO
+                        if (guid != null) {
+                            // Peticion de reclutamiento al agente
+                            recluteAgent(guid);
+                            // Respuesta del agente JoePublic
+                            Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
+                            sendJoePublicResponse(guid, response);
+                        }
                     } else {
                         // Habrá que luchar
                         log.info("Agente Sistema " + myAgent.getName() + " quiere luchar");
@@ -154,33 +155,40 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     private void sendResultToArchitect(String agentName, Constants.BATTLE_RESPONSE result) {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         aclMessage.addReceiver(arquitectAID);
-        GameMessage gm = new GameMessage(Constants.ARQUITECT_MESSAGE.WIN);
+        Constants.ARQUITECT_MESSAGE arquitectMessage = null;
+        switch (result) {
+            case WIN:
+                // Hemos ganado
+                arquitectMessage = Constants.ARQUITECT_MESSAGE.WIN;
+                break;
+            case DEFEAT:
+                // Hemos perdido
+                arquitectMessage = Constants.ARQUITECT_MESSAGE.DEFEAT;
+                break;
+            case TIE:
+                // Empate
+                arquitectMessage = Constants.ARQUITECT_MESSAGE.TIE;
+                break;
+        }
+        // Se envia siempre el otro agente. El arquitecto tratará quién es el perdedor.
         try {
+            GameMessage gm = new GameMessage(arquitectMessage, agentName);
             aclMessage.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String loser;
-        if (result == Constants.BATTLE_RESPONSE.WIN) {
-            // Hemos ganado
-            loser = agentName;
-        } else if (result == Constants.BATTLE_RESPONSE.TIE) {
-            // Empate (se envia el agente oponente)
-            loser = agentName;
-        } else {
-            // Hemos perdido
-            loser = this.myAgent.getName();
-        }
-        // Se envía el agente a ELIMINAR
-        // TODO: Esto podría fallar ?
-        gm.setContent(loser);
         TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "SENDING BATTLE RESULTS TO ARCHITECT");
     }
 
     private Constants.BATTLE_RESPONSE battleIntern(int enemyBonus) {
         boolean enemyIsBigger = enemyBonus > ((AgenteSimulacion) this.myAgent).getBonus();
-        int bonusFinal = enemyIsBigger ? enemyBonus - ((AgenteSimulacion) this.myAgent).getBonus() : ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
-        int randomNum = this.random.nextInt(bonusFinal);
+        int bonusFinal;
+        if (enemyIsBigger) {
+            bonusFinal = enemyBonus - ((AgenteSimulacion) this.myAgent).getBonus();
+        } else {
+            bonusFinal = ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
+        }
+        int randomNum = this.random.nextInt(Math.abs(bonusFinal));
         Constants.BATTLE_RESPONSE result;
         if (bonusFinal - randomNum > 5) {
             // Gana el de mas bonus
@@ -246,8 +254,6 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     }
 
     private void defeated() {
-        ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-        TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
         // Fin de la partida
         this.endOfGame = true;
     }
@@ -386,19 +392,16 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
 
     private GameStatus getGameStatusMessage() {
         // Se espera la confirmacion de la petición
-        ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST), GAMESTATUS_WAITING_TIME);
-        if (aclMessage != null) {
-            // Se ha recibido el mensaje
-            TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
-            GameStatus gameStatus = null;
-            try {
-                gameStatus = (GameStatus) aclMessage.getContentObject();
-            } catch (UnreadableException e) {
-                e.printStackTrace();
-            }
-            return gameStatus;
+        ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+        // Se ha recibido el mensaje
+        TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
+        GameStatus gameStatus = null;
+        try {
+            gameStatus = (GameStatus) aclMessage.getContentObject();
+        } catch (UnreadableException e) {
+            e.printStackTrace();
         }
-        return null;
+        return gameStatus;
     }
 
     private void requestGameStatus() {

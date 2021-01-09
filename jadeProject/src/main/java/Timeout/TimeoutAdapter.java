@@ -21,7 +21,7 @@ public class TimeoutAdapter {
         List<AID> receptoresRestantes = new ArrayList<>();
         it.forEachRemaining(o -> receptoresRestantes.add((AID) o));
         int count_sends = MAX_COUNT;
-        // TODO: Enviamos antes de esperar una respuesta
+        // Enviamos una vez antes de esperar una respuesta
         agent.send(msg);
         do {
             ACLMessage received = agent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), 5000);

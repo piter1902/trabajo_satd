@@ -18,7 +18,7 @@ public class AgenteArquitecto extends Agent {
 
     private String architectName;
 
-    private static final int NUMBER_JOEPUBLIC = 1;
+    private static final int NUMBER_JOEPUBLIC = 10;
 
     //  System Agents
     private Map<String, String> systemMap;
@@ -86,7 +86,7 @@ public class AgenteArquitecto extends Agent {
     private void crearAgentes() throws StaleProxyException {
         log.info("Comienza creacion de agentes ... ");
         createResistanceAgents();
-//        createSystemAgents();
+        createSystemAgents();
         createJoePublicAgents();
     }
 
@@ -108,8 +108,8 @@ public class AgenteArquitecto extends Agent {
 
     private void createResistanceAgents() throws StaleProxyException {
         resistanceMap.put(Constants.NEO_NAME, generateNewAgent(Constants.NEO_NAME, AgenteNeo.class, Constants.NEO_NAME, architectName));
-//        resistanceMap.put("Morfeo_KY", generateNewAgent("Morfeo", AgenteResistencia.class, "Morfeo", architectName));
-//        resistanceMap.put("Triniti_KY", generateNewAgent("Triniti", AgenteResistencia.class, "Triniti", architectName));
+        resistanceMap.put("Morfeo_KY", generateNewAgent("Morfeo", AgenteResistencia.class, "Morfeo", architectName));
+        resistanceMap.put("Triniti_KY", generateNewAgent("Triniti", AgenteResistencia.class, "Triniti", architectName));
 
     }
 

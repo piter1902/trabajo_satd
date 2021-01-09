@@ -1,9 +1,9 @@
 package main.java.SMACompetitive;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import main.java.Timeout.TimeoutAdapter;
 
 import java.util.logging.Logger;
 
@@ -61,6 +61,8 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
         this.bonus += incremento;
         if (this.bonus >= Constants.MAX_BONUS) {
             this.bonus = Constants.MAX_BONUS;
+        } else if (this.bonus <= 0) {
+            this.bonus = 0;
         }
     }
 

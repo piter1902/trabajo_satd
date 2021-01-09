@@ -85,14 +85,18 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case WIN:
                     // Alguien ha ganado la batalla [win()]
-                    // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     String agentName = gameMessage.getContent();
                     battleEnd(agentName, sender.getName());
                     break;
 
+                case DEFEAT:
+                    // Alguien ha perdido la batalla [defeat()]
+                    agentName = gameMessage.getContent();
+                    battleEnd(sender.getName(), agentName);
+                    break;
+
                 case TIE:
                     // Ha habido empate [tie()]
-                    // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = gameMessage.getContent();
                     battleEndTie(agentName, sender.getName());
                     break;
@@ -104,7 +108,6 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case CONVERT_JOEPUBLIC_TO_RESISTANCE:
                     //Añadir el agente de tipo JoePublic a resistencia
-                    // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = gameMessage.getContent();
                     convertPublicToResistencia(agentName);
                     ACLMessage response;
@@ -112,7 +115,6 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case CONVERT_JOEPUBLIC_TO_SYSTEM:
                     // Añadir el agente de tipo JoePublic a sistema
-                    // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = gameMessage.getContent();
                     convertPublicToSystem(agentName);
                     break;
@@ -126,14 +128,12 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case ORACULO_FOUND_RESISTANCE:
                     // El equipo RESISTANCE ha encontrado al oraculo
-                    // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = gameMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.RESISTANCE);
                     break;
 
                 case ORACULO_FOUND_SYSTEM:
                     // El equipo SYSTEM ha encontrado al oraculo
-                    // TODO: Comprobar si esto funciona si no -> enviar una tupla
                     agentName = gameMessage.getContent();
                     oraculoFound(agentName, Constants.TEAM.SYSTEM);
                     break;
@@ -155,10 +155,10 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             // message is null -> Error en el mensaje -> Se descarta
         }
         // Calculo del nuevo estado (si el numero de main.java.agentes de alguno de los dos bandos es 0)
-//        gameOver = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0
-//                || agentMap.get(Constants.TEAM.SYSTEM).entrySet().size() == 0;
+        gameOver = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0
+                || agentMap.get(Constants.TEAM.SYSTEM).entrySet().size() == 0;
         // TODO: Cambiar esto por lo comentado de arriba
-        gameOver = agentMap.get(Constants.TEAM.JOEPUBLIC).entrySet().size() == 0;
+//        gameOver = agentMap.get(Constants.TEAM.JOEPUBLIC).entrySet().size() == 0;
         if (gameOver) {
             gameOver();
         }
@@ -183,11 +183,13 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         ACLMessage response = new ACLMessage(ACLMessage.INFORM);
         if (agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0) {
             // En este caso, ha ganado el sistema
+            log.info("-----> Ha ganado el sistema");
             for (String agentName : agentMap.get(Constants.TEAM.SYSTEM).values()) {
                 response.addReceiver(new AID(agentName, AID.ISGUID));
             }
         } else {
             // En caso contrario, ha ganado la resistencia
+            log.info("-----> Ha ganado la resistencia");
             for (String agentName : agentMap.get(Constants.TEAM.RESISTANCE).values()) {
                 response.addReceiver(new AID(agentName, AID.ISGUID));
             }
@@ -282,12 +284,18 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         TimeoutAdapter.sendWithTimeout(response, this.myAgent, "GET JOEPULIC FROM " + sender.getName());
     }
 
-    private void battleEnd(String agentName, String senderName) {
+    /**
+     * Funcion que libera a los agentes de la batalla. Elimina al agente perdedor.
+     *
+     * @param defeated agente perdedor de la batalla.
+     * @param winner   agente ganador de la batalla.
+     */
+    private void battleEnd(String defeated, String winner) {
         // Se elimina al agente que ha sido ganado
-        killAgent(agentName);
+        killAgent(defeated);
         // Se desbloquean los main.java.agentes que estaban como ocupados
-        busyAgents.remove(agentName);
-        busyAgents.remove(senderName);
+        busyAgents.remove(defeated);
+        busyAgents.remove(winner);
     }
 
     private void battleEndTie(String agentName, String senderName) {
@@ -336,6 +344,9 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             this.busyAgents.add(systemAgent);
             this.busyAgents.add(sender.getName());
             getAgentMatch(sender, systemAgent);
+        } else {
+            // else ->  No tengo oponente para luchar :(
+            noOpponentToBattle(sender);
         }
     }
 
@@ -346,7 +357,23 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
             this.busyAgents.add(resistanceAgent);
             this.busyAgents.add(sender.getName());
             getAgentMatch(sender, resistanceAgent);
+        } else {
+            // else ->  No tengo oponente para luchar :(
+            noOpponentToBattle(sender);
         }
+    }
+
+    private void noOpponentToBattle(AID sender) {
+        // No hay oponente
+        ACLMessage aclMessage = new ACLMessage(ACLMessage.CANCEL);
+        GameMessage gm = new GameMessage(null, null);
+        aclMessage.addReceiver(sender);
+        try {
+            aclMessage.setContentObject(gm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        TimeoutAdapter.sendWithTimeout(aclMessage, this.myAgent, "NO HAY OPONENTE PARA LUCHAR");
     }
 
     private void getAgentMatch(AID sender, String resistanceAgent) {
@@ -382,9 +409,10 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         }
         Collections.shuffle(agents);
         for (int i = 0; i < agents.size(); i++) {
-            agentName = agents.get(i).getValue();
-            if (!busyAgents.contains(agentName)) {
+            String posibleAgentName = agents.get(i).getValue();
+            if (!busyAgents.contains(posibleAgentName)) {
                 // No esta ocupado. Nos vale.
+                agentName = posibleAgentName;
                 break;
             }
             // Esta ocupado. Repetimos

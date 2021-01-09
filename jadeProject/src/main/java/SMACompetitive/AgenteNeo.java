@@ -1,10 +1,14 @@
 package main.java.SMACompetitive;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import main.java.Timeout.TimeoutAdapter;
+
+import java.util.logging.Logger;
 
 public class AgenteNeo extends AgenteResistencia {
+
+    private final Logger logger = Logger.getLogger(AgenteNeo.class.getName());
 
     private Thread agreeThread;
 
@@ -14,6 +18,7 @@ public class AgenteNeo extends AgenteResistencia {
             // Esperamos el mensaje de oraculo
             ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.AGREE));
             TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
+            logger.info("Recibido el bonus del Oraculo");
             // Recalculamos el bonus
             recalcBonus(+5);
         });
