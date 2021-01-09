@@ -16,6 +16,9 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     public static final int WAITING_TIME = 100;
     public static final int GAMESTATUS_WAITING_TIME = 1000;
     private final static Logger log = Logger.getLogger(AgenteSistemaBehaviour.class.getName());
+
+    // Maximo del numero aleatorio para bonusFinal en battleIntern
+    public static final int MAX_BOUND = 50;
     // Direccion del arquitecto
     private final AID arquitectAID;
     // Componente aleatorio
@@ -188,6 +191,12 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         } else {
             bonusFinal = ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
         }
+        if (bonusFinal == 0) {
+            // Para que no se estanque el juego
+            // Este es el caso de que los bonus son iguales
+            // El randomNum calculado posteriormente estara entre 0 y MAX_BOUND - 1
+            bonusFinal = this.random.nextInt(MAX_BOUND);
+        }
         int randomNum = this.random.nextInt(Math.abs(bonusFinal));
         Constants.BATTLE_RESPONSE result;
         if (bonusFinal - randomNum > 5) {
@@ -310,6 +319,8 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         } else if (response == Constants.JOEPUBLIC_RESPONSE.NO) {
             // El agente del sistema mata al JoePublic no convertido
             type = Constants.ARQUITECT_MESSAGE.KILL_JOEPUBLIC;
+            // TODO: Penalizacion del sistema por matar a un agente
+            ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
         } else if (response == Constants.JOEPUBLIC_RESPONSE.ORACULO) {
             type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_SYSTEM;
         }

@@ -28,6 +28,9 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
     // AID from the architect. Is requeired when converting to a TEAM
     private AID architectAID;
 
+    // Bonus
+    private int bonus;
+
     @Override
     protected void setup() {
         super.setup();
@@ -37,8 +40,8 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
         this.probabilityToConvertResistance = random.nextInt(100);
         random = new Random(System.nanoTime());
         this.probabilityToConvertSystem = random.nextInt(100);
+        this.bonus = Constants.INITIAL_BONUS;
         // Thread que escucha el mensaje de tipo INFORM
-        // TODO: Esto esta aqui un poco de gratis, igual es incompatible con los demas
         informThread = new Thread(() -> {
             // Esperamos el mensaje de kill
             ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
@@ -60,12 +63,17 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
 
     @Override
     public void recalcBonus(int incremento) {
-
+        this.bonus += incremento;
+        if (this.bonus >= Constants.MAX_BONUS) {
+            this.bonus = Constants.MAX_BONUS;
+        } else if (this.bonus <= 0) {
+            this.bonus = 0;
+        }
     }
 
     @Override
     public int getBonus() {
-        return 0;
+        return this.bonus;
     }
 
 

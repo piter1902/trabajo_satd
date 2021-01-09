@@ -41,9 +41,13 @@ public class AgenteSmith extends AgenteSistema {
 
     @Override
     public void recalcBonus(int incremento) {
-        this.bonus += incremento;
-        if (this.bonus >= Constants.MAX_BONUS_NEO_SMITH) {
-            this.bonus = Constants.MAX_BONUS_NEO_SMITH;
+        synchronized (this) {
+            this.bonus += incremento;
+            if (this.bonus >= Constants.MAX_BONUS_NEO_SMITH) {
+                this.bonus = Constants.MAX_BONUS_NEO_SMITH;
+            } else if (this.bonus <= 0) {
+                this.bonus = 0;
+            }
         }
     }
 

@@ -19,6 +19,9 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
     private final static Logger log = Logger.getLogger(AgenteResistenciaBehaviour.class.getName());
 
+    // Maximo del numero aleatorio para bonusFinal en battleIntern
+    public static final int MAX_BOUND = 50;
+
     // Direccion del arquitecto
     private final AID arquitectAID;
     // Componente aleatorio
@@ -189,6 +192,12 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
             bonusFinal = enemyBonus - ((AgenteSimulacion) this.myAgent).getBonus();
         } else {
             bonusFinal = ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
+        }
+        if (bonusFinal == 0) {
+            // Para que no se estanque el juego
+            // Este es el caso de que los bonus son iguales
+            // El randomNum calculado posteriormente estara entre 0 y MAX_BOUND - 1
+            bonusFinal = this.random.nextInt(MAX_BOUND);
         }
         int randomNum = this.random.nextInt(Math.abs(bonusFinal));
         Constants.BATTLE_RESPONSE result;
