@@ -80,7 +80,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                             break;
                     }
                 } else {
-                    System.out.println("Estoy en el caso de que IGUAL recluto");
                     // Acciones normales (tener en cuenta al orcaulo?)
                     if (nJP > 0) {
                         // Intentamos reclutar

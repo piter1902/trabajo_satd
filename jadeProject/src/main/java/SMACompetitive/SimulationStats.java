@@ -31,15 +31,28 @@ public class SimulationStats {
     private Constants.TEAM teamOraculoFound;
     private String nameOfOraculoDiscover;
 
+    // Display GUI
+    private SimulationStatsGUI simulationStatsGUI;
+
 
     // Singleton
     private static final SimulationStats instance = new SimulationStats();
 
     private SimulationStats() {
+        this.simulationStatsGUI = new SimulationStatsGUI();
     }
 
     public static SimulationStats getInstance() {
         return instance;
+    }
+
+    // Display GUI
+    public void showGUI() {
+        String result = createStatString();
+        this.simulationStatsGUI.setTextOnArea(result);
+        this.simulationStatsGUI.setSize(400, 400);
+        this.simulationStatsGUI.setContentPane(this.simulationStatsGUI.$$$getRootComponent$$$());
+        this.simulationStatsGUI.setVisible(true);
     }
 
     // Getters
@@ -111,7 +124,7 @@ public class SimulationStats {
         return numberOfGetGameStatus;
     }
 
-    //Setters
+    // Setters
 
     public void setOraculoFound(boolean oraculoFound) {
         this.oraculoFound = oraculoFound;
@@ -137,7 +150,7 @@ public class SimulationStats {
         this.numberAgentsJoePublic = numberAgentsJoePublic;
     }
 
-    //increasers
+    // Increasers
 
     public void increaseNumberOfResistanceConversions() {
         this.numberOfResistanceConversions++;
@@ -184,27 +197,33 @@ public class SimulationStats {
     }
 
     public void printStats() {
-        System.out.println("*".repeat(66));
-        System.out.println("*".repeat(28) + "Game Stats" + "*".repeat(28));
-        System.out.format("%-45s %20s\n", "* Peticiones de estado de juego:", numberOfGetGameStatus);
-        System.out.format("%-45s %20s\n", "* Conversiones conseguidas por Resistencia:", numberOfResistanceConversions);
-        System.out.format("%-45s %20s\n","* Conversiones conseguidas por Sistema:", numberOfSystemConversions);
-        System.out.format("%-45s %20s\n","* Intentos de conversion por Resistencia:", numberOfResistanceRecluitments);
-        System.out.format("%-45s %20s\n","* Intentos de conversion por Sistema:", numberOfSystemRecluitments);
-        System.out.format("%-45s %20s\n","* JoePublic eliminados por Sistema:", numberOfSystemJPKills);
-        System.out.format("%-45s %20s\n","* Peticiones de batalla por Resistencia:", numberOfBattlesResistance);
-        System.out.format("%-45s %20s\n","* Peticiones de batalla por Sistema:", numberOfBattlesSystem);
-        System.out.format("%-45s %20s\n","* Victorias de Resistencia:", numberOfResistanceWins);
-        System.out.format("%-45s %20s\n","* Victorias de Sistema:", numberOfSystemWins);
-        System.out.format("%-45s %20s\n","* Numero de empates:", numberOfTies);
+        String result = createStatString();
+        System.out.println(result);
+    }
+
+    private String createStatString() {
+        String result = "*".repeat(66) + "\n";
+        result += "*".repeat(28) + "Game Stats" + "*".repeat(28) + "\n";
+        result += String.format("%-45s %20s\n", "* Peticiones de estado de juego:", numberOfGetGameStatus);
+        result += String.format("%-45s %20s\n", "* Conversiones conseguidas por Resistencia:", numberOfResistanceConversions);
+        result += String.format("%-45s %20s\n", "* Conversiones conseguidas por Sistema:", numberOfSystemConversions);
+        result += String.format("%-45s %20s\n", "* Intentos de conversion por Resistencia:", numberOfResistanceRecluitments);
+        result += String.format("%-45s %20s\n", "* Intentos de conversion por Sistema:", numberOfSystemRecluitments);
+        result += String.format("%-45s %20s\n", "* JoePublic eliminados por Sistema:", numberOfSystemJPKills);
+        result += String.format("%-45s %20s\n", "* Peticiones de batalla por Resistencia:", numberOfBattlesResistance);
+        result += String.format("%-45s %20s\n", "* Peticiones de batalla por Sistema:", numberOfBattlesSystem);
+        result += String.format("%-45s %20s\n", "* Victorias de Resistencia:", numberOfResistanceWins);
+        result += String.format("%-45s %20s\n", "* Victorias de Sistema:", numberOfSystemWins);
+        result += String.format("%-45s %20s\n", "* Numero de empates:", numberOfTies);
         if (isOraculoFound()) {
-            System.out.format("* ORACULO ENCONTRADO por %s (%s)\n", nameOfOraculoDiscover, teamOraculoFound);
+            result += String.format("* ORACULO ENCONTRADO por %s (%s)\n", nameOfOraculoDiscover, teamOraculoFound);
         } else {
-            System.out.format("* ORACULO NO ENCONTRADO\n");
+            result += "* ORACULO NO ENCONTRADO\n";
         }
-        System.out.format("%-45s %20s\n","* Numero de Agentes Resistencia restantes:", numberAgentsResistance);
-        System.out.format("%-45s %20s\n","* Numero de Agentes Sistema restantes:", numberAgentsSystem);
-        System.out.format("%-45s %20s\n","* Numero de Agentes JoePublic restantes:", numberAgentsJoePublic);
-        System.out.println("*".repeat(28) + "Game Stats" + "*".repeat(28));
+        result += String.format("%-45s %20s\n", "* Numero de Agentes Resistencia restantes:", numberAgentsResistance);
+        result += String.format("%-45s %20s\n", "* Numero de Agentes Sistema restantes:", numberAgentsSystem);
+        result += String.format("%-45s %20s\n", "* Numero de Agentes JoePublic restantes:", numberAgentsJoePublic);
+        result += "*".repeat(28) + "Game Stats" + "*".repeat(28) + "\n";
+        return result;
     }
 }

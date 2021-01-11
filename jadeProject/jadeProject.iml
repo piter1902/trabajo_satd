@@ -16,6 +16,6 @@
     <orderEntry type="library" name="swing-layout-1.0.4" level="project" />
     <orderEntry type="library" name="crimson" level="project" />
     <orderEntry type="library" name="http" level="project" />
-    <orderEntry type="library" name="log4j-api-2.14.0" level="project" />
+    <orderEntry type="library" name="log4j-api-2.14.01" level="project" />
   </component>
 </module>

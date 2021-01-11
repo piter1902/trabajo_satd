@@ -3,7 +3,9 @@ package main.java.SMACompetitive;
 public class Constants {
     public static final int INITIAL_BONUS = 50;
     public static final int MAX_BONUS = 90;
+    public static final int MIN_BONUS = 40;
     public static final int MAX_BONUS_NEO_SMITH = 99;
+
 
     // Equipos
     public enum TEAM {

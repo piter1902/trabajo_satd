@@ -45,8 +45,8 @@ public class AgenteSmith extends AgenteSistema {
             this.bonus += incremento;
             if (this.bonus >= Constants.MAX_BONUS_NEO_SMITH) {
                 this.bonus = Constants.MAX_BONUS_NEO_SMITH;
-            } else if (this.bonus <= 0) {
-                this.bonus = 0;
+            } else if (this.bonus <= Constants.MIN_BONUS) {
+                this.bonus = Constants.MIN_BONUS;
             }
         }
     }
