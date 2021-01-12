@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
     private static Logger log = null;
+
     static {
         InputStream stream = AgenteArquitectoBehaviour.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");
@@ -32,12 +33,12 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     private final Map<Constants.TEAM, Map<String, String>> agentMap;
     // Lista de los main.java.agentes que estan ocupados (en batalla o en reclutamiento)
     private final List<String> busyAgents;
-    // Flag de fin del juego
-    private boolean gameOver;
     // Flag de oraculo
     private final boolean oraculoFound;
     //Stats singleton
     private final SimulationStats stats = SimulationStats.getInstance();
+    // Flag de fin del juego
+    private boolean gameOver;
 
     public AgenteArquitectoBehaviour(Map<String, String> agentsResistencia,
                                      Map<String, String> agentsSistema,
@@ -207,20 +208,22 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         if (gameOver) {
             gameOver();
             // Se muestran resultados
-            printMatrixStats();
+            Constants.TEAM winnerTeam = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0 ?
+                    Constants.TEAM.SYSTEM : Constants.TEAM.RESISTANCE;
+            printMatrixStats(winnerTeam);
         }
     }
 
     /**
      * Muestra estadísticas del juego a partir del singletone SimulationStat
      */
-    private void printMatrixStats() {
+    private void printMatrixStats(Constants.TEAM winnerTeam) {
         // Estos valores se deben aplicar al finalizar el juego
         stats.setNumberAgentsJoePublic(agentMap.get(Constants.TEAM.JOEPUBLIC).size());
         stats.setNumberAgentsResistance(agentMap.get(Constants.TEAM.RESISTANCE).size());
         stats.setNumberAgentsSystem(agentMap.get(Constants.TEAM.SYSTEM).size());
         stats.printStats();
-        stats.showGUI();
+        stats.showGUI(winnerTeam);
         stats.reset();
     }
 

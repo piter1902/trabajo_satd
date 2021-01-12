@@ -2,6 +2,10 @@ package main.java.SMACompetitive;
 
 public class SimulationStats {
 
+    // Singleton
+    private static final SimulationStats instance = new SimulationStats();
+    // Display GUI
+    private final SimulationStatsGUI simulationStatsGUI;
     // Variables to log
     // Número de peticiones del estado del juego
     // TODO:puede ser interesante separarlo en RESISTANCE | SYSTEM
@@ -31,12 +35,6 @@ public class SimulationStats {
     private Constants.TEAM teamOraculoFound;
     private String nameOfOraculoDiscover;
 
-    // Display GUI
-    private final SimulationStatsGUI simulationStatsGUI;
-
-    // Singleton
-    private static final SimulationStats instance = new SimulationStats();
-
     private SimulationStats() {
         this.simulationStatsGUI = new SimulationStatsGUI();
     }
@@ -46,11 +44,12 @@ public class SimulationStats {
     }
 
     // Display GUI
-    public void showGUI() {
+    public void showGUI(Constants.TEAM winnerTeam) {
         String result = createStatString();
         this.simulationStatsGUI.setTextOnArea(result);
         this.simulationStatsGUI.setSize(400, 400);
         this.simulationStatsGUI.setContentPane(this.simulationStatsGUI.$$$getRootComponent$$$());
+        this.simulationStatsGUI.setTitle(String.format("Winner: %s", winnerTeam.name()));
         this.simulationStatsGUI.setVisible(true);
     }
 
@@ -81,138 +80,138 @@ public class SimulationStats {
         return numberOfResistanceConversions;
     }
 
-    public int getNumberOfSystemConversions() {
-        return numberOfSystemConversions;
-    }
-
-    public int getNumberOfResistanceRecluitments() {
-        return numberOfResistanceRecluitments;
-    }
-
-    public int getNumberOfSystemRecluitments() {
-        return numberOfSystemRecluitments;
-    }
-
-    public int getNumberOfSystemJPKills() {
-        return numberOfSystemJPKills;
-    }
-
-    public int getNumberOfBattlesResistance() {
-        return numberOfBattlesResistance;
-    }
-
-    public int getNumberOfBattlesSystem() {
-        return numberOfBattlesSystem;
-    }
-
-    public int getNumberOfResistanceWins() {
-        return numberOfResistanceWins;
-    }
-
-    public int getNumberOfSystemWins() {
-        return numberOfSystemWins;
-    }
-
-    public int getNumberOfTies() {
-        return numberOfTies;
-    }
-
-    public int getNumberAgentsResistance() {
-        return numberAgentsResistance;
-    }
-
-    public int getNumberAgentsSystem() {
-        return numberAgentsSystem;
-    }
-
-    public int getNumberAgentsJoePublic() {
-        return numberAgentsJoePublic;
-    }
-
-    public Constants.TEAM getTeamOraculoFound() {
-        return teamOraculoFound;
-    }
-
-    public String getNameOfOraculoDiscover() {
-        return nameOfOraculoDiscover;
-    }
-
-    public boolean isOraculoFound() {
-        return oraculoFound;
-    }
-
-    public int getNumberOfGetGameStatus() {
-        return numberOfGetGameStatus;
-    }
-
-    // Setters
-
-    public void setOraculoFound(boolean oraculoFound) {
-        this.oraculoFound = oraculoFound;
-    }
-
-    public void setTeamOraculoFound(Constants.TEAM teamOraculoFound) {
-        this.teamOraculoFound = teamOraculoFound;
-    }
-
-    public void setNameOfOraculoDiscover(String nameOfOraculoDiscover) {
-        this.nameOfOraculoDiscover = nameOfOraculoDiscover;
-    }
-
-    public void setNumberAgentsResistance(int numberAgentsResistance) {
-        this.numberAgentsResistance = numberAgentsResistance;
-    }
-
-    public void setNumberAgentsSystem(int numberAgentsSystem) {
-        this.numberAgentsSystem = numberAgentsSystem;
-    }
-
-    public void setNumberAgentsJoePublic(int numberAgentsJoePublic) {
-        this.numberAgentsJoePublic = numberAgentsJoePublic;
-    }
-
-    public void setNumberOfGetGameStatus(int numberOfGetGameStatus) {
-        this.numberOfGetGameStatus = numberOfGetGameStatus;
-    }
-
     public void setNumberOfResistanceConversions(int numberOfResistanceConversions) {
         this.numberOfResistanceConversions = numberOfResistanceConversions;
+    }
+
+    public int getNumberOfSystemConversions() {
+        return numberOfSystemConversions;
     }
 
     public void setNumberOfSystemConversions(int numberOfSystemConversions) {
         this.numberOfSystemConversions = numberOfSystemConversions;
     }
 
+    public int getNumberOfResistanceRecluitments() {
+        return numberOfResistanceRecluitments;
+    }
+
     public void setNumberOfResistanceRecluitments(int numberOfResistanceRecluitments) {
         this.numberOfResistanceRecluitments = numberOfResistanceRecluitments;
+    }
+
+    public int getNumberOfSystemRecluitments() {
+        return numberOfSystemRecluitments;
     }
 
     public void setNumberOfSystemRecluitments(int numberOfSystemRecluitments) {
         this.numberOfSystemRecluitments = numberOfSystemRecluitments;
     }
 
+    public int getNumberOfSystemJPKills() {
+        return numberOfSystemJPKills;
+    }
+
     public void setNumberOfSystemJPKills(int numberOfSystemJPKills) {
         this.numberOfSystemJPKills = numberOfSystemJPKills;
+    }
+
+    public int getNumberOfBattlesResistance() {
+        return numberOfBattlesResistance;
     }
 
     public void setNumberOfBattlesResistance(int numberOfBattlesResistance) {
         this.numberOfBattlesResistance = numberOfBattlesResistance;
     }
 
+    public int getNumberOfBattlesSystem() {
+        return numberOfBattlesSystem;
+    }
+
     public void setNumberOfBattlesSystem(int numberOfBattlesSystem) {
         this.numberOfBattlesSystem = numberOfBattlesSystem;
+    }
+
+    public int getNumberOfResistanceWins() {
+        return numberOfResistanceWins;
     }
 
     public void setNumberOfResistanceWins(int numberOfResistanceWins) {
         this.numberOfResistanceWins = numberOfResistanceWins;
     }
 
+    public int getNumberOfSystemWins() {
+        return numberOfSystemWins;
+    }
+
+    // Setters
+
     public void setNumberOfSystemWins(int numberOfSystemWins) {
         this.numberOfSystemWins = numberOfSystemWins;
     }
 
+    public int getNumberOfTies() {
+        return numberOfTies;
+    }
+
     public void setNumberOfTies(int numberOfTies) {
         this.numberOfTies = numberOfTies;
+    }
+
+    public int getNumberAgentsResistance() {
+        return numberAgentsResistance;
+    }
+
+    public void setNumberAgentsResistance(int numberAgentsResistance) {
+        this.numberAgentsResistance = numberAgentsResistance;
+    }
+
+    public int getNumberAgentsSystem() {
+        return numberAgentsSystem;
+    }
+
+    public void setNumberAgentsSystem(int numberAgentsSystem) {
+        this.numberAgentsSystem = numberAgentsSystem;
+    }
+
+    public int getNumberAgentsJoePublic() {
+        return numberAgentsJoePublic;
+    }
+
+    public void setNumberAgentsJoePublic(int numberAgentsJoePublic) {
+        this.numberAgentsJoePublic = numberAgentsJoePublic;
+    }
+
+    public Constants.TEAM getTeamOraculoFound() {
+        return teamOraculoFound;
+    }
+
+    public void setTeamOraculoFound(Constants.TEAM teamOraculoFound) {
+        this.teamOraculoFound = teamOraculoFound;
+    }
+
+    public String getNameOfOraculoDiscover() {
+        return nameOfOraculoDiscover;
+    }
+
+    public void setNameOfOraculoDiscover(String nameOfOraculoDiscover) {
+        this.nameOfOraculoDiscover = nameOfOraculoDiscover;
+    }
+
+    public boolean isOraculoFound() {
+        return oraculoFound;
+    }
+
+    public void setOraculoFound(boolean oraculoFound) {
+        this.oraculoFound = oraculoFound;
+    }
+
+    public int getNumberOfGetGameStatus() {
+        return numberOfGetGameStatus;
+    }
+
+    public void setNumberOfGetGameStatus(int numberOfGetGameStatus) {
+        this.numberOfGetGameStatus = numberOfGetGameStatus;
     }
 
     // Increasers
