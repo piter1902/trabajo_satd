@@ -6,13 +6,26 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.java.Timeout.TimeoutAdapter;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class AgenteJoePublic extends Agent implements AgenteSimulacion {
 
-    private final static Logger log = Logger.getLogger(AgenteJoePublic.class.getName());
+    private static Logger log = null;
+    static {
+        InputStream stream = AgenteJoePublic.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteJoePublic.class.getName());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // Probability to be converted to a resistance agent
     private int probabilityToConvertResistance;
 

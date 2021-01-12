@@ -8,7 +8,9 @@ import jade.lang.acl.UnreadableException;
 import main.java.Timeout.TimeoutAdapter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 class AgenteResistenciaBehaviour extends SimpleBehaviour {
@@ -17,7 +19,19 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
     public static final int GAMESTATUS_WAITING_TIME = 5000;
 
-    private final static Logger log = Logger.getLogger(AgenteResistenciaBehaviour.class.getName());
+    private static Logger log = null;
+
+    static {
+        InputStream stream = AgenteResistenciaBehaviour.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteResistenciaBehaviour.class.getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Maximo del numero aleatorio para bonusFinal en battleIntern
     public static final int MAX_BOUND = 50;
@@ -185,20 +199,24 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     }
 
     private Constants.BATTLE_RESPONSE battleIntern(int enemyBonus) {
-        boolean enemyIsBigger = enemyBonus > ((AgenteSimulacion) this.myAgent).getBonus();
+        int resisBonus = ((AgenteSimulacion) this.myAgent).getBonus();
+        boolean enemyIsBigger = enemyBonus > resisBonus;
+        log.info("BATTLE INTERN (" + this.myAgent.getName() + ") - RESISTANCE BONUS: " + resisBonus + " | SYSTEM BONUS: " + enemyBonus);
         int bonusFinal;
         if (enemyIsBigger) {
-            bonusFinal = enemyBonus - ((AgenteSimulacion) this.myAgent).getBonus();
+            bonusFinal = enemyBonus - resisBonus;
         } else {
-            bonusFinal = ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
+            bonusFinal = resisBonus - enemyBonus;
         }
-        if (bonusFinal == Constants.MIN_BONUS) {
+        if (bonusFinal == 0) {
             // Para que no se estanque el juego
             // Este es el caso de que los bonus son iguales
             // El randomNum calculado posteriormente estara entre 0 y MAX_BOUND - 1
             bonusFinal = this.random.nextInt(MAX_BOUND);
+            log.info("BATTLE INTERN RESISTANCE - BONUS MINIMO. RECALCULANDO... " + bonusFinal);
         }
         int randomNum = this.random.nextInt(Math.abs(bonusFinal));
+        log.info("BATTLE INTERN RESISTANCE - RANDOM NUM: " + randomNum);
         Constants.BATTLE_RESPONSE result;
         if (bonusFinal - randomNum > 5) {
             // Gana el de mas bonus
@@ -207,6 +225,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
             // Tablas
             result = Constants.BATTLE_RESPONSE.TIE;
         }
+        log.info("BATTLE INTERN RESISTANCE - RESULT: " + result);
         return result;
     }
 

@@ -5,12 +5,25 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.java.Timeout.TimeoutAdapter;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class AgenteSistema extends Agent implements AgenteSimulacion {
 
-    private final static Logger log = Logger.getLogger(AgenteSistema.class.getName());
+    private static Logger log = null;
+    static {
+        InputStream stream = AgenteSistema.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteSistema.class.getName());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     protected int bonus;
 
     private String name;

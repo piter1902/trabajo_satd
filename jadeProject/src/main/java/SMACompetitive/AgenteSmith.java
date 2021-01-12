@@ -4,11 +4,26 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import main.java.Timeout.TimeoutAdapter;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class AgenteSmith extends AgenteSistema {
 
-    private final Logger logger = Logger.getLogger(AgenteSmith.class.getName());
+    private static Logger log = null;
+
+    static {
+        InputStream stream = AgenteSmith.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteSmith.class.getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private Thread agreeThread;
 
@@ -18,7 +33,7 @@ public class AgenteSmith extends AgenteSistema {
             // Esperamos el mensaje de oraculo
             ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.AGREE));
             TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
-            logger.info("Recibido el bonus del Oraculo");
+            log.info("Recibido el bonus del Oraculo");
             // Recalculamos el bonus
             recalcBonus(+5);
         });

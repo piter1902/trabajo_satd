@@ -8,13 +8,27 @@ import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import main.java.Timeout.TimeoutAdapter;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 
 public class AgenteArquitecto extends Agent {
 
-    private final static Logger log = Logger.getLogger(AgenteArquitecto.class.getName());
+    private static Logger log =null;
+    static {
+        InputStream stream = AgenteArquitecto.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteArquitecto.class.getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private String architectName;
 

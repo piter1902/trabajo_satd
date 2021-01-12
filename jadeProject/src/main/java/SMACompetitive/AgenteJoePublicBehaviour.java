@@ -8,15 +8,27 @@ import jade.lang.acl.UnreadableException;
 import main.java.Timeout.TimeoutAdapter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import static main.java.SMACompetitive.Constants.INITIAL_BONUS;
 
 public class AgenteJoePublicBehaviour extends SimpleBehaviour {
 
-    private final static Logger log = Logger.getLogger(AgenteJoePublicBehaviour.class.getName());
+    private static Logger log = null;
+    static {
+        InputStream stream = AgenteJoePublicBehaviour.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteJoePublicBehaviour.class.getName());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // Probabilities of conversion
     private final int probabilityResistance;
     private final int probabilitySystem;

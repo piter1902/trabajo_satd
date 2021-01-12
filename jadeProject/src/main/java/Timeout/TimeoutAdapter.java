@@ -5,8 +5,11 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class TimeoutAdapter {
@@ -14,7 +17,18 @@ public class TimeoutAdapter {
     // Numero máximo de reintentos de envíos
     private static final int MAX_COUNT = 10;
 
-    private final static Logger log = Logger.getLogger(TimeoutAdapter.class.getName());
+    private static Logger log = null;
+    static {
+        InputStream stream = TimeoutAdapter.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(TimeoutAdapter.class.getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void sendWithTimeout(ACLMessage msg, Agent agent, String... context) {
         jade.util.leap.Iterator it = msg.getAllReceiver();
@@ -27,11 +41,11 @@ public class TimeoutAdapter {
             ACLMessage received = agent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), 5000);
             if (received != null) {
                 // Esto es el ACK
-                log.severe(String.format("Agente %s: ACK received from %s . CONTEXT -------------> %s\n", agent.getName(), received.getSender().getName(), context[0]));
+//                log.severe(String.format("Agente %s: ACK received from %s . CONTEXT -------------> %s\n", agent.getName(), received.getSender().getName(), context[0]));
                 receptoresRestantes.remove(received.getSender());
             } else {
                 // Esto es otra cosa. Volvemos a intentarlo
-                log.warning(String.format("Agente %s: ACK not received. Trying %d more times. CONTEXT -------------> %s\n", agent.getName(), count_sends, context[0]));
+//                log.warning(String.format("Agente %s: ACK not received. Trying %d more times. CONTEXT -------------> %s\n", agent.getName(), count_sends, context[0]));
                 count_sends--;
                 // Se envia el mensaje a los que no han enviado ACK
                 msg.clearAllReceiver();

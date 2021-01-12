@@ -8,13 +8,25 @@ import jade.lang.acl.UnreadableException;
 import main.java.Timeout.TimeoutAdapter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
-    private final static Logger log = Logger.getLogger(AgenteArquitectoBehaviour.class.getName());
+    private static Logger log = null;
+    static {
+        InputStream stream = AgenteArquitectoBehaviour.class.getClassLoader().
+                getResourceAsStream("main/resources/logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(AgenteArquitectoBehaviour.class.getName());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Lista de main.java.agentes (las tuplas son: nombre de agente, direccionAID.string)
     private final Map<Constants.TEAM, Map<String, String>> agentMap;
@@ -92,8 +104,9 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                     // Alguien ha ganado la batalla [win()]
                     String winner = sender.getName();
                     String loser = gameMessage.getContent();
+                    log.info("WIN CASE - winner: " + winner + " loser: " + loser);
                     // Obtain the team of the winner
-                    if (agentMap.get(Constants.TEAM.RESISTANCE).containsKey(winner)) {
+                    if (agentMap.get(Constants.TEAM.RESISTANCE).containsValue(winner)) {
                         stats.increaseNumberOfResistanceWins();
                     } else {
                         stats.increaseNumberOfSystemWins();
@@ -105,8 +118,10 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                     // Alguien ha perdido la batalla [defeat()]
                     winner = gameMessage.getContent();
                     loser = sender.getName();
+                    log.info("DEFEAT CASE - winner: " + winner + " loser: " + loser);
+
                     // Obtain the team of the winner
-                    if (agentMap.get(Constants.TEAM.RESISTANCE).containsKey(winner)) {
+                    if (agentMap.get(Constants.TEAM.RESISTANCE).containsValue(winner)) {
                         stats.increaseNumberOfResistanceWins();
                     } else {
                         stats.increaseNumberOfSystemWins();
@@ -118,6 +133,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                     // Ha habido empate [tie()]
                     stats.increaseNumberOfTies();
                     String agentName = gameMessage.getContent();
+                    log.info("TIE CASE: " + agentName + " VS " + sender.getName());
                     battleEndTie(agentName, sender.getName());
                     break;
 
