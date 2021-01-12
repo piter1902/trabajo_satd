@@ -221,6 +221,7 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         stats.setNumberAgentsSystem(agentMap.get(Constants.TEAM.SYSTEM).size());
         stats.printStats();
         stats.showGUI();
+        stats.reset();
     }
 
     private void agentInUse(AID sender) {

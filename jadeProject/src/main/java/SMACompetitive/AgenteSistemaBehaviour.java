@@ -118,11 +118,11 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
                             // Calculo de la batalla
                             Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
                             log.info("Agente Sistema " + myAgent.getName() + " resultado de batalla: " + result);
-
-                            // Enviamos el resultado al arquitecto
-                            sendResultToArchitect(agentName, result);
+                            // TODO: Se cambia el orden para evitar fallos
                             // Enviamos el resultado al otro agente
                             sendResultToOponent(agentName, result);
+                            // Enviamos el resultado al arquitecto
+                            sendResultToArchitect(agentName, result);
                             // Acciones a realizar
                             switch (result) {
                                 case WIN:
@@ -210,8 +210,8 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         if (bonusFinal == 0) {
             // Para que no se estanque el juego
             // Este es el caso de que los bonus son iguales
-            // El randomNum calculado posteriormente estara entre 0 y MAX_BOUND - 1
-            bonusFinal = this.random.nextInt(MAX_BOUND);
+            // El randomNum calculado posteriormente estara entre 1 y MAX_BOUND - 1
+            bonusFinal = this.random.nextInt(MAX_BOUND - 1) + 1;
             log.info("BATTLE INTERN SYSTEM - BONUS MINIMO. RECALCULANDO... " + bonusFinal);
         }
         int randomNum = this.random.nextInt(Math.abs(bonusFinal));

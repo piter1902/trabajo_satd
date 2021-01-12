@@ -34,7 +34,6 @@ public class SimulationStats {
     // Display GUI
     private final SimulationStatsGUI simulationStatsGUI;
 
-
     // Singleton
     private static final SimulationStats instance = new SimulationStats();
 
@@ -53,6 +52,28 @@ public class SimulationStats {
         this.simulationStatsGUI.setSize(400, 400);
         this.simulationStatsGUI.setContentPane(this.simulationStatsGUI.$$$getRootComponent$$$());
         this.simulationStatsGUI.setVisible(true);
+    }
+
+    /**
+     * Resetea la instancia del singletone
+     * Sólo es útil si se ejecuta varias veces el programa sin volver a compilar
+     */
+    public void reset() {
+        setNameOfOraculoDiscover("");
+        setOraculoFound(false);
+        setTeamOraculoFound(null);
+        setNumberOfBattlesSystem(0);
+        setNumberAgentsSystem(0);
+        setNumberOfBattlesResistance(0);
+        setNumberOfGetGameStatus(0);
+        setNumberOfResistanceConversions(0);
+        setNumberOfSystemConversions(0);
+        setNumberOfSystemJPKills(0);
+        setNumberOfResistanceWins(0);
+        setNumberOfSystemWins(0);
+        setNumberOfTies(0);
+        setNumberOfResistanceRecluitments(0);
+        setNumberOfSystemRecluitments(0);
     }
 
     // Getters
@@ -150,6 +171,50 @@ public class SimulationStats {
         this.numberAgentsJoePublic = numberAgentsJoePublic;
     }
 
+    public void setNumberOfGetGameStatus(int numberOfGetGameStatus) {
+        this.numberOfGetGameStatus = numberOfGetGameStatus;
+    }
+
+    public void setNumberOfResistanceConversions(int numberOfResistanceConversions) {
+        this.numberOfResistanceConversions = numberOfResistanceConversions;
+    }
+
+    public void setNumberOfSystemConversions(int numberOfSystemConversions) {
+        this.numberOfSystemConversions = numberOfSystemConversions;
+    }
+
+    public void setNumberOfResistanceRecluitments(int numberOfResistanceRecluitments) {
+        this.numberOfResistanceRecluitments = numberOfResistanceRecluitments;
+    }
+
+    public void setNumberOfSystemRecluitments(int numberOfSystemRecluitments) {
+        this.numberOfSystemRecluitments = numberOfSystemRecluitments;
+    }
+
+    public void setNumberOfSystemJPKills(int numberOfSystemJPKills) {
+        this.numberOfSystemJPKills = numberOfSystemJPKills;
+    }
+
+    public void setNumberOfBattlesResistance(int numberOfBattlesResistance) {
+        this.numberOfBattlesResistance = numberOfBattlesResistance;
+    }
+
+    public void setNumberOfBattlesSystem(int numberOfBattlesSystem) {
+        this.numberOfBattlesSystem = numberOfBattlesSystem;
+    }
+
+    public void setNumberOfResistanceWins(int numberOfResistanceWins) {
+        this.numberOfResistanceWins = numberOfResistanceWins;
+    }
+
+    public void setNumberOfSystemWins(int numberOfSystemWins) {
+        this.numberOfSystemWins = numberOfSystemWins;
+    }
+
+    public void setNumberOfTies(int numberOfTies) {
+        this.numberOfTies = numberOfTies;
+    }
+
     // Increasers
 
     public void increaseNumberOfResistanceConversions() {
@@ -200,6 +265,7 @@ public class SimulationStats {
         String result = createStatString();
         System.out.println(result);
     }
+
 
     private String createStatString() {
         String result = "*".repeat(66) + "\n";
