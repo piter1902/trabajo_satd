@@ -191,7 +191,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         } else {
             bonusFinal = ((AgenteSimulacion) this.myAgent).getBonus() - enemyBonus;
         }
-        if (bonusFinal == 0) {
+        if (bonusFinal == Constants.MIN_BONUS) {
             // Para que no se estanque el juego
             // Este es el caso de que los bonus son iguales
             // El randomNum calculado posteriormente estara entre 0 y MAX_BOUND - 1

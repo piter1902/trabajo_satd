@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 public class GameStatus implements Serializable {
 
-    private boolean oraculoFound;
+    private final boolean oraculoFound;
 
-    private int nResistencia;
+    private final int nResistencia;
 
-    private int nSistema;
+    private final int nSistema;
 
-    private int nJoePublic;
+    private final int nJoePublic;
 
     public GameStatus(boolean oraculoFound, int nResistencia, int nSistema, int nJoePublic) {
         this.oraculoFound = oraculoFound;

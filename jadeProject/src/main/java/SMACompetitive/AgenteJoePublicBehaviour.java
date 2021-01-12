@@ -74,10 +74,10 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
     }
 
     private void changeBehaviour(Constants.TEAM team) {
-        if (team == Constants.TEAM.RESISTANCE){
+        if (team == Constants.TEAM.RESISTANCE) {
             myAgent.addBehaviour(new AgenteResistenciaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
             myAgent.removeBehaviour(this);
-        }else {
+        } else {
             myAgent.addBehaviour(new AgenteSistemaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
             myAgent.removeBehaviour(this);
         }

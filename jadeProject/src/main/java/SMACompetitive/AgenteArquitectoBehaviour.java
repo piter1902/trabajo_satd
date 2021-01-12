@@ -23,9 +23,9 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     // Flag de fin del juego
     private boolean gameOver;
     // Flag de oraculo
-    private boolean oraculoFound;
+    private final boolean oraculoFound;
     //Stats singleton
-    private SimulationStats stats =  SimulationStats.getInstance();
+    private final SimulationStats stats = SimulationStats.getInstance();
 
     public AgenteArquitectoBehaviour(Map<String, String> agentsResistencia,
                                      Map<String, String> agentsSistema,
@@ -90,13 +90,13 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
                 case WIN:
                     // Alguien ha ganado la batalla [win()]
-                    String loser = gameMessage.getContent();
                     String winner = sender.getName();
+                    String loser = gameMessage.getContent();
                     // Obtain the team of the winner
-                    if (agentMap.get(Constants.TEAM.RESISTANCE).get(loser) != null){
-                        stats.increaseNumberOfSystemWins();
-                    }else {
+                    if (agentMap.get(Constants.TEAM.RESISTANCE).containsKey(winner)) {
                         stats.increaseNumberOfResistanceWins();
+                    } else {
+                        stats.increaseNumberOfSystemWins();
                     }
                     battleEnd(loser, winner);
                     break;
@@ -106,12 +106,12 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
                     winner = gameMessage.getContent();
                     loser = sender.getName();
                     // Obtain the team of the winner
-                    if (agentMap.get(Constants.TEAM.RESISTANCE).get(winner) != null){
+                    if (agentMap.get(Constants.TEAM.RESISTANCE).containsKey(winner)) {
                         stats.increaseNumberOfResistanceWins();
-                    }else {
+                    } else {
                         stats.increaseNumberOfSystemWins();
                     }
-                    battleEnd(loser,winner);
+                    battleEnd(loser, winner);
                     break;
 
                 case TIE:

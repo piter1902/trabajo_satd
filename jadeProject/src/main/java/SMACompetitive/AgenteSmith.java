@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class AgenteSmith extends AgenteSistema {
 
-    private Logger logger = Logger.getLogger(AgenteSmith.class.getName());
+    private final Logger logger = Logger.getLogger(AgenteSmith.class.getName());
 
     private Thread agreeThread;
 

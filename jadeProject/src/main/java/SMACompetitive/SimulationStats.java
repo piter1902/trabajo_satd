@@ -32,7 +32,7 @@ public class SimulationStats {
     private String nameOfOraculoDiscover;
 
     // Display GUI
-    private SimulationStatsGUI simulationStatsGUI;
+    private final SimulationStatsGUI simulationStatsGUI;
 
 
     // Singleton

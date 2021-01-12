@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class GameMessage implements Serializable {
 
-    private Constants.GAME_MESSAGE message;
+    private final Constants.GAME_MESSAGE message;
 
     private String content;
 
