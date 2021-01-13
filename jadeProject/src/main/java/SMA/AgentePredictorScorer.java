@@ -1,11 +1,11 @@
 package main.java.SMA;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import main.java.Timeout.TimeoutAdapter;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -41,7 +41,7 @@ public class AgentePredictorScorer extends GuiAgent {
         @Override
         public void action() {
             // Recepcion de los dos parametros (dataset y modelo)
-            for (int i = 0; i < 2; i++) {
+            while (validationDataset == null || classifier == null) {
                 ACLMessage aclMessage = this.myAgent.blockingReceive();
                 // Reply with ACK
                 TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);

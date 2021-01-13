@@ -1,10 +1,10 @@
 package main.java.SMA;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import main.java.Timeout.TimeoutAdapter;
 import weka.classifiers.meta.MultiClassClassifier;
 import weka.core.Instances;
 import weka.filters.Filter;
@@ -88,6 +88,7 @@ public class AgenteNormalizarMLP extends Agent {
             }
             this.myAgent.send(sendMessage);
             // main.java.Timeout protocol
+            System.out.format("Agent %s: sending model to receivers\n", this.myAgent.getName());
             TimeoutAdapter.sendWithTimeout(sendMessage, this.myAgent);
 
             System.out.format("Agent %s: message sent to receivers\n", this.myAgent.getName());

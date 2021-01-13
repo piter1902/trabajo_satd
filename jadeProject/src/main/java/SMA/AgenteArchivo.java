@@ -1,12 +1,11 @@
 package main.java.SMA;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.gui.GuiAgent;
 import jade.gui.GuiEvent;
 import jade.lang.acl.ACLMessage;
+import main.java.Timeout.TimeoutAdapter;
 import weka.core.Instances;
-import weka.core.converters.CSVSaver;
 import weka.core.converters.Saver;
 
 import javax.swing.*;
@@ -70,7 +69,7 @@ public class AgenteArchivo extends GuiAgent {
             if (ruta.matches(".*\\.arff$")) {
                 // Es un conjunto de weka
                 wekaDataset = new Instances(file);
-                saveToFile(wekaDataset, new CSVSaver());
+//                saveToFile(wekaDataset, new CSVSaver());
             } /*else if (ruta.matches(".*\\.csv$")) {
                 // Es un conjunto CSV separado por , y con cabecera
                 CSVLoader loader = new CSVLoader();

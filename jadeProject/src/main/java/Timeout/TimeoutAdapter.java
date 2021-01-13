@@ -16,6 +16,7 @@ public class TimeoutAdapter {
 
     // Numero máximo de reintentos de envíos
     private static final int MAX_COUNT = 10;
+    public static final int TIMEOUT = 5000;
 
     private static Logger log = null;
     static {
@@ -38,7 +39,7 @@ public class TimeoutAdapter {
         // Enviamos una vez antes de esperar una respuesta
         agent.send(msg);
         do {
-            ACLMessage received = agent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), 5000);
+            ACLMessage received = agent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), TIMEOUT);
             if (received != null) {
                 // Esto es el ACK
 //                log.severe(String.format("Agente %s: ACK received from %s . CONTEXT -------------> %s\n", agent.getName(), received.getSender().getName(), context[0]));
@@ -63,10 +64,13 @@ public class TimeoutAdapter {
         List<AID> receptoresRestantes2 = new ArrayList<>();
         it1.forEachRemaining(o -> receptoresRestantes1.add((AID) o));
         it2.forEachRemaining(o -> receptoresRestantes2.add((AID) o));
+        // Send Messages
+        agent.send(msg1);
+        agent.send(msg2);
         int count_sends = MAX_COUNT;
         do {
-            ACLMessage received = agent.blockingReceive(1000);
-            if (received != null && received.getPerformative() == ACLMessage.CONFIRM) {
+            ACLMessage received = agent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), TIMEOUT);
+            if (received != null) {
                 // Esto es el ACK
                 AID sender = received.getSender();
                 log.severe(String.format("Agente %s: ACK received from %s\n", agent.getName(), received.getSender().getName()));
