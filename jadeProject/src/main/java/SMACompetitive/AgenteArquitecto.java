@@ -32,7 +32,7 @@ public class AgenteArquitecto extends Agent {
 
     private String architectName;
 
-    private static final int NUMBER_JOEPUBLIC = 10;
+    private static final int NUMBER_JOEPUBLIC = 100;
 
     //  System Agents
     private Map<String, String> systemMap;

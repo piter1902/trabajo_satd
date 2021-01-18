@@ -13,20 +13,18 @@ import java.util.Random;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-class AgenteResistenciaBehaviour extends SimpleBehaviour {
+class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
 
     public static final int WAITING_TIME = 100;
-
-    public static final int GAMESTATUS_WAITING_TIME = 5000;
-
+    public static final int GAMESTATUS_WAITING_TIME = 1000;
     private static Logger log = null;
 
     static {
-        InputStream stream = AgenteResistenciaBehaviour.class.getClassLoader().
+        InputStream stream = AgenteSistemaBehaviour_2.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");
         try {
             LogManager.getLogManager().readConfiguration(stream);
-            log = Logger.getLogger(AgenteResistenciaBehaviour.class.getName());
+            log = Logger.getLogger(AgenteSistemaBehaviour_2.class.getName());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -35,15 +33,16 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
     // Maximo del numero aleatorio para bonusFinal en battleIntern
     public static final int MAX_BOUND = 50;
-
     // Direccion del arquitecto
     private final AID arquitectAID;
     // Componente aleatorio
     private final Random random;
+    // Bonus
+    private int bonus;
     // End of game
     private boolean endOfGame;
 
-    AgenteResistenciaBehaviour(int bonus, AID arquitect) {
+    AgenteSistemaBehaviour_2(int bonus, AID arquitect) {
         this.endOfGame = false;
         this.arquitectAID = arquitect;
         this.random = new Random(System.nanoTime());
@@ -52,7 +51,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     @Override
     public void action() {
         // Comprobacion de que no se ha terminado el juego
-        // TODO: Esto no debería existir
 //        this.endOfGame = checkGameOver();
 
         if (!endOfGame) {
@@ -72,15 +70,15 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                 // oponentAID sera null si no hay una batalla pendiente
                 if (oponentAID != null) {
                     // Estamos en batalla por peticion de los otros
-                    log.info("Agente Resistencia " + myAgent.getName() + " observa que " + oponentAID.getName() + " quiere luchar");
+                    log.info("Agente Sistema " + myAgent.getName() + " observa que " + oponentAID.getName() + " quiere luchar");
                     sendBonusToOpponent(oponentAID);
                     // Esperamos la respuesta del agente oponente
                     Constants.BATTLE_RESPONSE response = getBattleResponse();
-                    log.info("Agente Resistencia " + myAgent.getName() + ". Resultado batalla: " + response);
+                    log.info("Agente Sistema " + myAgent.getName() + ". Resultado batalla: " + response);
                     switch (response) {
                         case WIN:
                             // Recalcular bonus
-                            ((AgenteSimulacion) this.myAgent).recalcBonus(+1);
+                            ((AgenteSimulacion) this.myAgent).recalcBonus(1);
                             break;
 
                         case DEFEAT:
@@ -96,58 +94,97 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                 } else {
                     // Acciones normales (tener en cuenta al orcaulo?)
                     if (nJP > 0) {
-                        // Intentamos reclutar
-                        log.info("Agente Resistencia " + myAgent.getName() + " comienza a reclutar");
-                        requestJoePublicAgent();
-                        String guid = getJoePublicID();
-                        if (guid != null) {
-                            // Peticion de reclutamiento al agente
-                            recluteAgent(guid);
-                            // Respuesta del agente JoePublic
-                            Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
-                            sendJoePublicResponse(guid, response);
-                        }
-                    } else {
-                        log.info("Agente Resistencia " + myAgent.getName() + " quiere luchar");
-                        // Habrá que luchar
-                        sendRequestForMatch();
-                        // Respuesta del arquitecto
-                        String agentName = getMatchedAgent();
-
-                        if (agentName != null) {
-                            log.info("Agente Resistencia " + myAgent.getName() + " pide batalla a " + agentName);
-                            // Hay emparejamiento
-                            int enemyBonus = getEnemyBonus(agentName);
-                            // Calculo de la batalla
-                            Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
-                            log.info("Agente Resistencia " + myAgent.getName() + " resultado de batalla: " + result);
-                            // TODO: Se cambia el orden para evitar fallos
-                            // Enviamos el resultado al otro agente
-                            sendResultToOponent(agentName, result);
-                            // Enviamos el resultado al arquitecto
-                            sendResultToArchitect(agentName, result);
-                            // Acciones a realizar
-                            switch (result) {
-                                case WIN:
-                                    // Recalcular bonus
-                                    ((AgenteSimulacion) this.myAgent).recalcBonus(+1);
-                                    break;
-                                case DEFEAT:
-                                    // Esperamos la eliminacion
-                                    defeated();
-                                    break;
-                                case TIE:
-                                    // Empate
-                                    ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
-                                    break;
+                        double estadoDeAnimo =  this.random.nextDouble();
+                        log.info("Agente aliados(S) " + nSi);
+                        log.info("Agente enemigos(S) " + nRe);
+                        if (oraculo){
+                            if (nSi > nRe){
+                                if (estadoDeAnimo > 0.5){
+                                    combatir();
+                                }else{
+                                    reclutar();
+                                }
+                            }else{
+                                if (estadoDeAnimo > 0.1){
+                                    reclutar();
+                                }else{
+                                    combatir();
+                                }
+                            }
+                        } else{
+                            if (nSi > nRe){
+                                if (estadoDeAnimo > 0.8){
+                                    reclutar();
+                                }else{
+                                    combatir();
+                                }
+                            }else{
+                                if (estadoDeAnimo > 0.2){
+                                    reclutar();
+                                }else{
+                                    combatir();
+                                }
                             }
                         }
+                    } else {
+                        combatir();
                         // else -> CANCEL
                     }
                 }
             }
         }
 
+    }
+
+    private void reclutar(){
+        // Intentamos reclutar
+        log.info("Agente Sistema " + myAgent.getName() + " comienza a reclutar");
+        requestJoePublicAgent();
+        String guid = getJoePublicID();
+        if (guid != null) {
+            // Peticion de reclutamiento al agente
+            recluteAgent(guid);
+            // Respuesta del agente JoePublic
+            Constants.JOEPUBLIC_RESPONSE response = getJoePublicResponse();
+            sendJoePublicResponse(guid, response);
+        }
+        log.info("Agente Sistema " + myAgent.getName() + " termina de reclutar");
+    }
+
+    private void combatir(){
+        log.info("Agente Sistema " + myAgent.getName() + " quiere luchar");
+        sendRequestForMatch();
+        // Respuesta del arquitecto
+        String agentName = getMatchedAgent();
+        log.info("Agente Sistema pelea con " + agentName);
+        if (agentName != null) {
+            // Hay emparejamiento
+            log.info("Agente Sistema " + myAgent.getName() + " pide batalla a " + agentName);
+            int enemyBonus = getEnemyBonus(agentName);
+            // Calculo de la batalla
+            Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
+            log.info("Agente Sistema " + myAgent.getName() + " resultado de batalla: " + result);
+            // TODO: Se cambia el orden para evitar fallos
+            // Enviamos el resultado al otro agente
+            sendResultToOponent(agentName, result);
+            // Enviamos el resultado al arquitecto
+            sendResultToArchitect(agentName, result);
+            // Acciones a realizar
+            switch (result) {
+                case WIN:
+                    // Recalcular bonus
+                    ((AgenteSimulacion) this.myAgent).recalcBonus(+1);
+                    break;
+                case DEFEAT:
+                    // Esperamos la eliminacion
+                    defeated();
+                    break;
+                case TIE:
+                    // Empate
+                    ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
+                    break;
+            }
+        }
     }
 
     private void sendResultToOponent(String agentName, Constants.BATTLE_RESPONSE result) {
@@ -201,24 +238,24 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     }
 
     private Constants.BATTLE_RESPONSE battleIntern(int enemyBonus) {
-        int resisBonus = ((AgenteSimulacion) this.myAgent).getBonus();
-        boolean enemyIsBigger = enemyBonus > resisBonus;
-        log.info("BATTLE INTERN (" + this.myAgent.getName() + ") - RESISTANCE BONUS: " + resisBonus + " | SYSTEM BONUS: " + enemyBonus);
+        int sisBonus = ((AgenteSimulacion) this.myAgent).getBonus();
+        boolean enemyIsBigger = enemyBonus > sisBonus;
+        log.info("BATTLE INTERN (" + this.myAgent.getName() + ") - SYSTEM BONUS: " + sisBonus + " | RESISTANCE BONUS: " + enemyBonus);
         int bonusFinal;
         if (enemyIsBigger) {
-            bonusFinal = enemyBonus - resisBonus;
+            bonusFinal = enemyBonus - sisBonus;
         } else {
-            bonusFinal = resisBonus - enemyBonus;
+            bonusFinal = sisBonus - enemyBonus;
         }
         if (bonusFinal == 0) {
             // Para que no se estanque el juego
             // Este es el caso de que los bonus son iguales
-            // El randomNum calculado posteriormente estara entre 0 y MAX_BOUND - 1
+            // El randomNum calculado posteriormente estara entre 1 y MAX_BOUND - 1
             bonusFinal = this.random.nextInt(MAX_BOUND - 1) + 1;
-            log.info("BATTLE INTERN RESISTANCE - BONUS MINIMO. RECALCULANDO... " + bonusFinal);
+            log.info("BATTLE INTERN SYSTEM - BONUS MINIMO. RECALCULANDO... " + bonusFinal);
         }
         int randomNum = this.random.nextInt(Math.abs(bonusFinal));
-        log.info("BATTLE INTERN RESISTANCE - RANDOM NUM: " + randomNum);
+        log.info("BATTLE INTERN SYSTEM - RANDOM NUM: " + randomNum);
         Constants.BATTLE_RESPONSE result;
         if (bonusFinal - randomNum > 5) {
             // Gana el de mas bonus
@@ -227,7 +264,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
             // Tablas
             result = Constants.BATTLE_RESPONSE.TIE;
         }
-        log.info("BATTLE INTERN RESISTANCE - RESULT: " + result);
+        log.info("BATTLE INTERN SYSTEM - RESULT: " + result);
         return result;
     }
 
@@ -276,7 +313,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         aclMessage.addReceiver(arquitectAID);
         try {
-            GameMessage gm = new GameMessage(Constants.ARQUITECT_MESSAGE.GET_SYSTEM_MATCH);
+            GameMessage gm = new GameMessage(Constants.ARQUITECT_MESSAGE.GET_RESISTANCE_MATCH);
             aclMessage.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
@@ -315,6 +352,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     }
 
     private boolean checkGameOver() {
+        log.info("Agente Sistema " + myAgent.getName() + " comprueba fin de juego");
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM), WAITING_TIME);
         boolean isGameOver = aclMessage != null;
         if (isGameOver) {
@@ -336,12 +374,14 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private void sendJoePublicResponse(String guid, Constants.JOEPUBLIC_RESPONSE response) {
         Constants.ARQUITECT_MESSAGE type = null;
         if (response == Constants.JOEPUBLIC_RESPONSE.YES) {
-            type = Constants.ARQUITECT_MESSAGE.CONVERT_JOEPUBLIC_TO_RESISTANCE;
+            type = Constants.ARQUITECT_MESSAGE.CONVERT_JOEPUBLIC_TO_SYSTEM;
         } else if (response == Constants.JOEPUBLIC_RESPONSE.NO) {
-            // El agente de la resistencia deja en paz al joepublic
-            type = Constants.ARQUITECT_MESSAGE.NOT_CONVERTED;
+            // El agente del sistema mata al JoePublic no convertido
+            type = Constants.ARQUITECT_MESSAGE.KILL_JOEPUBLIC;
+            // TODO: Penalizacion del sistema por matar a un agente
+            ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
         } else if (response == Constants.JOEPUBLIC_RESPONSE.ORACULO) {
-            type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_RESISTANCE;
+            type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_SYSTEM;
         }
         manipulateJoePublic(guid, type);
     }
@@ -349,8 +389,8 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private void manipulateJoePublic(String guid, Constants.ARQUITECT_MESSAGE type) {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         aclMessage.addReceiver(arquitectAID);
-        GameMessage gm = new GameMessage(type, guid);
         try {
+            GameMessage gm = new GameMessage(type, guid);
             aclMessage.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
@@ -375,7 +415,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
         aclMessage.addReceiver(new AID(guid, AID.ISGUID));
         try {
-            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.RESISTANCE_RECRUITE);
+            GameMessage gm = new GameMessage(Constants.AGENT_MESSAGE.SYSTEM_RECRUITE);
             aclMessage.setContentObject(gm);
         } catch (IOException e) {
             e.printStackTrace();
@@ -399,7 +439,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     private void requestJoePublicAgent() {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         //TODO: Lo hago aqui para simplificar codigo
-        SimulationStats.getInstance().increaseNumberOfResistanceRecluitments();
+        SimulationStats.getInstance().increaseNumberOfSystemRecluitments();
         aclMessage.addReceiver(arquitectAID);
         try {
             GameMessage gm = new GameMessage(Constants.ARQUITECT_MESSAGE.GET_JOEPUBLIC_AGENT);
@@ -437,6 +477,7 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     }
 
     private void requestGameStatus() {
+        log.info("Agente Sistema " + myAgent.getName() + " pide estado de sistema");
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
         aclMessage.addReceiver(arquitectAID);
         try {

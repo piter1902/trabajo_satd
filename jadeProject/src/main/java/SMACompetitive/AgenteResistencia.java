@@ -53,7 +53,7 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
         ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
         log.info("Agente Resistencia " + getName() + " sale de la barrera ");
-        addBehaviour(new AgenteResistenciaBehaviour(this.bonus, aclMessage.getSender()));
+        addBehaviour(new AgenteResistenciaBehaviour_2(this.bonus, aclMessage.getSender()));
     }
 
     @Override

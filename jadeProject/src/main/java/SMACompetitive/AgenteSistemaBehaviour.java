@@ -359,7 +359,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     }
 
     private Constants.JOEPUBLIC_RESPONSE getJoePublicResponse() {
-        ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
+        ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this.myAgent);
         Constants.JOEPUBLIC_RESPONSE response = null;
         try {

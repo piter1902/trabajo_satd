@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Practica5/Practica5.iml" filepath="$PROJECT_DIR$/Practica5/Practica5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jadeProject/jadeProject.iml" filepath="$PROJECT_DIR$/jadeProject/jadeProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/trabajo_satd.iml" filepath="$PROJECT_DIR$/.idea/trabajo_satd.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="log4j-api-2.14.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../PROGRAMAS/apache-log4j-2.14.0-bin/log4j-api-2.14.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/log4j-api-2.14.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

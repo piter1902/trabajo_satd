@@ -87,16 +87,16 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
 
     private void changeBehaviour(Constants.TEAM team) {
         if (team == Constants.TEAM.RESISTANCE) {
-            myAgent.addBehaviour(new AgenteResistenciaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
+            myAgent.addBehaviour(new AgenteResistenciaBehaviour_2(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
             myAgent.removeBehaviour(this);
         } else {
-            myAgent.addBehaviour(new AgenteSistemaBehaviour(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
+            myAgent.addBehaviour(new AgenteSistemaBehaviour_2(INITIAL_BONUS, ((AgenteJoePublic) myAgent).getArchitectAID()));
             myAgent.removeBehaviour(this);
         }
     }
 
     private void sendResponseToConverter(Constants.JOEPUBLIC_RESPONSE decision, AID sender) {
-        ACLMessage aclMessage = new ACLMessage(ACLMessage.PROPOSE);
+        ACLMessage aclMessage = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
         aclMessage.addReceiver(sender);
         try {
             GameMessage gm = new GameMessage(decision);
