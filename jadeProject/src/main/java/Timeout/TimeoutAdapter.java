@@ -19,6 +19,7 @@ public class TimeoutAdapter {
     public static final int TIMEOUT = 5000;
 
     private static Logger log = null;
+
     static {
         InputStream stream = TimeoutAdapter.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");

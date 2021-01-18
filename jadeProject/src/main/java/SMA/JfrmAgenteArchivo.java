@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 
 public class JfrmAgenteArchivo extends JFrame {
 
-    private GuiAgent agent;
+    private final GuiAgent agent;
 
     private JButton seleccionarArchivoButton;
     private JButton iniciarProcesoButton;

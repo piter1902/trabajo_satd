@@ -1,10 +1,10 @@
 package main.java.SMA;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import main.java.Timeout.TimeoutAdapter;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;

@@ -1,12 +1,12 @@
 package main.java.SMA;
 
-import main.java.Timeout.TimeoutAdapter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import main.java.Timeout.TimeoutAdapter;
 import weka.core.Instances;
 
 import java.io.IOException;
@@ -69,7 +69,6 @@ public class AgenteParticion extends Agent {
             System.out.format("Message received at %s : %s (rows)\n", myAgent.getName(), wekaDataset.numInstances());
 
 
-
             // Randomize dataset
             wekaDataset.randomize(new Random(System.nanoTime()));
 
@@ -110,7 +109,6 @@ public class AgenteParticion extends Agent {
             TimeoutAdapter.sendWithTimeout2Messages(partition1Message, partition2Message, this.myAgent);
 
         }
-
 
 
     }

@@ -30,7 +30,7 @@ public class AgenteNormalizarMLP extends Agent {
         receivers = new ArrayList<>();
         // args es la lista de receptores
         for (Object o : args) {
-            if (o instanceof String){
+            if (o instanceof String) {
                 String s = (String) o;
 //                System.out.println(s);
                 receivers.add(new AID(s, AID.ISGUID));

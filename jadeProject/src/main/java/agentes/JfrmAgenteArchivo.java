@@ -26,6 +26,7 @@ public class JfrmAgenteArchivo extends javax.swing.JFrame {
     private javax.swing.JButton jbtnBrowser;
     private javax.swing.JButton jbtnIniciar;
     private javax.swing.JLabel jlblRuta;
+
     public JfrmAgenteArchivo(GuiAgent agente) {
         this.owner = agente;//recibe por parametro el agente que lo creo
         initComponents();
