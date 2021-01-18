@@ -203,8 +203,6 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
         // Calculo del nuevo estado (si el numero de main.java.agentes de alguno de los dos bandos es 0)
         gameOver = agentMap.get(Constants.TEAM.RESISTANCE).entrySet().size() == 0
                 || agentMap.get(Constants.TEAM.SYSTEM).entrySet().size() == 0;
-        // TODO: Cambiar esto por lo comentado de arriba
-//        gameOver = agentMap.get(Constants.TEAM.JOEPUBLIC).entrySet().size() == 0;
         if (gameOver) {
             gameOver();
             // Se muestran resultados
@@ -299,7 +297,6 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
     private void convertPublicToSystem(String agentName) {
         ACLMessage response;
         convertJoePublic(agentName, Constants.TEAM.SYSTEM);
-        // TODO: Se ha modificado el tipo de mensaje a PROPOSE ya que JP solo espera ese tipo
         response = new ACLMessage(ACLMessage.PROPOSE);
         response.addReceiver(new AID(agentName, AID.ISGUID));
         try {
@@ -313,7 +310,6 @@ class AgenteArquitectoBehaviour extends SimpleBehaviour {
 
     private void convertPublicToResistencia(String agentName) {
         convertJoePublic(agentName, Constants.TEAM.RESISTANCE);
-        // TODO: Se ha modificado el tipo de mensaje a PROPOSE ya que JP solo espera ese tipo
         ACLMessage response = new ACLMessage(ACLMessage.PROPOSE);
         response.addReceiver(new AID(agentName, AID.ISGUID));
         try {

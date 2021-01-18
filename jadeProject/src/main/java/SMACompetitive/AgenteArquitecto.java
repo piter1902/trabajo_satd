@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 
 public class AgenteArquitecto extends Agent {
 
-    private static Logger log =null;
+    private static Logger log = null;
+
     static {
         InputStream stream = AgenteArquitecto.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");
@@ -143,7 +144,6 @@ public class AgenteArquitecto extends Agent {
     private String generateNewAgent(String name, Class classObject, Object... args) throws StaleProxyException {
         ContainerController cc = getContainerController();
         String agentName = name != null ? name : UUID.randomUUID().toString();
-        // TODO: El nombre se pasa en los argumentos?? Creo que no
         AgentController ac = cc.createNewAgent(agentName, classObject.getName(), args);
         ac.start();
         return ac.getName();

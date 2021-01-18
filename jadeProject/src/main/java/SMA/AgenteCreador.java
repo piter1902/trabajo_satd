@@ -25,7 +25,6 @@ public class AgenteCreador extends Agent {
     }
 
     private void crearAgentes() throws StaleProxyException {
-        // TODO: Crear main.java.agentes y pasar por parametro a quien deben enviar cosas
         // Agentes PredictorScorer (MLP, J48, NaiveBayes)
         map.put("MLP_PS", generateNewAgent("MLP", AgentePredictorScorer.class, null));
         map.put("J48_PS", generateNewAgent("J48", AgentePredictorScorer.class, null));
@@ -64,7 +63,6 @@ public class AgenteCreador extends Agent {
      * @throws StaleProxyException
      */
     private String generateNewAgent(String name, Class classObject, Object... args) throws StaleProxyException {
-        // TODO: Crear con los containers
         ContainerController cc = getContainerController();
         String agentName = name != null ? name : UUID.randomUUID().toString();
         AgentController ac = cc.createNewAgent(agentName, classObject.getName(), args);

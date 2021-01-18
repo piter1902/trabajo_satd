@@ -18,6 +18,7 @@ import static main.java.SMACompetitive.Constants.INITIAL_BONUS;
 public class AgenteJoePublicBehaviour extends SimpleBehaviour {
 
     private static Logger log = null;
+
     static {
         InputStream stream = AgenteJoePublicBehaviour.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");
@@ -29,6 +30,7 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
             e.printStackTrace();
         }
     }
+
     // Probabilities of conversion
     private final int probabilityResistance;
     private final int probabilitySystem;
@@ -114,9 +116,7 @@ public class AgenteJoePublicBehaviour extends SimpleBehaviour {
      * @return YES if it will convert. No if NOT. ORACLE if it's the oracle
      */
     private Constants.JOEPUBLIC_RESPONSE resistConversion(Constants.TEAM team) {
-        // TODO: buscar un mecanismo más sofisticado para resistirse
         Random randomTemp = new Random(System.nanoTime());
-        // TODO: se puede asi?
         if (myAgent instanceof AgenteOraculo) {
             // Se comprueba si es el oraculo
             log.info("Agente JP " + myAgent.getName() + " es ORACULO");

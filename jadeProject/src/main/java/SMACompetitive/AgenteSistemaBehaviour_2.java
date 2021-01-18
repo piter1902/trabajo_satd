@@ -94,34 +94,34 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
                 } else {
                     // Acciones normales (tener en cuenta al orcaulo?)
                     if (nJP > 0) {
-                        double estadoDeAnimo =  this.random.nextDouble();
+                        double estadoDeAnimo = this.random.nextDouble();
                         log.info("Agente aliados(S) " + nSi);
                         log.info("Agente enemigos(S) " + nRe);
-                        if (oraculo){
-                            if (nSi > nRe){
-                                if (estadoDeAnimo > 0.5){
+                        if (oraculo) {
+                            if (nSi > nRe) {
+                                if (estadoDeAnimo > 0.5) {
                                     combatir();
-                                }else{
+                                } else {
                                     reclutar();
                                 }
-                            }else{
-                                if (estadoDeAnimo > 0.1){
+                            } else {
+                                if (estadoDeAnimo > 0.1) {
                                     reclutar();
-                                }else{
+                                } else {
                                     combatir();
                                 }
                             }
-                        } else{
-                            if (nSi > nRe){
-                                if (estadoDeAnimo > 0.8){
+                        } else {
+                            if (nSi > nRe) {
+                                if (estadoDeAnimo > 0.8) {
                                     reclutar();
-                                }else{
+                                } else {
                                     combatir();
                                 }
-                            }else{
-                                if (estadoDeAnimo > 0.2){
+                            } else {
+                                if (estadoDeAnimo > 0.2) {
                                     reclutar();
-                                }else{
+                                } else {
                                     combatir();
                                 }
                             }
@@ -136,7 +136,7 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
 
     }
 
-    private void reclutar(){
+    private void reclutar() {
         // Intentamos reclutar
         log.info("Agente Sistema " + myAgent.getName() + " comienza a reclutar");
         requestJoePublicAgent();
@@ -151,7 +151,7 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
         log.info("Agente Sistema " + myAgent.getName() + " termina de reclutar");
     }
 
-    private void combatir(){
+    private void combatir() {
         log.info("Agente Sistema " + myAgent.getName() + " quiere luchar");
         sendRequestForMatch();
         // Respuesta del arquitecto
@@ -164,7 +164,6 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
             // Calculo de la batalla
             Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
             log.info("Agente Sistema " + myAgent.getName() + " resultado de batalla: " + result);
-            // TODO: Se cambia el orden para evitar fallos
             // Enviamos el resultado al otro agente
             sendResultToOponent(agentName, result);
             // Enviamos el resultado al arquitecto
@@ -378,7 +377,7 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
         } else if (response == Constants.JOEPUBLIC_RESPONSE.NO) {
             // El agente del sistema mata al JoePublic no convertido
             type = Constants.ARQUITECT_MESSAGE.KILL_JOEPUBLIC;
-            // TODO: Penalizacion del sistema por matar a un agente
+            // Penalizacion del sistema por matar a un agente
             ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
         } else if (response == Constants.JOEPUBLIC_RESPONSE.ORACULO) {
             type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_SYSTEM;
@@ -438,7 +437,6 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
 
     private void requestJoePublicAgent() {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
-        //TODO: Lo hago aqui para simplificar codigo
         SimulationStats.getInstance().increaseNumberOfSystemRecluitments();
         aclMessage.addReceiver(arquitectAID);
         try {
@@ -451,7 +449,6 @@ class AgenteSistemaBehaviour_2 extends SimpleBehaviour {
     }
 
     private AID anyoneWantsToBattle() {
-        // TODO: Comprobar que no hay deadlocks
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE), WAITING_TIME);
         // aclMessage == null si no hay peticiones de batalla
         boolean wantToBattle = aclMessage != null;

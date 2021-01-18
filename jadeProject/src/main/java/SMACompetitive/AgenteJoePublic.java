@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 public class AgenteJoePublic extends Agent implements AgenteSimulacion {
 
     private static Logger log = null;
+
     static {
         InputStream stream = AgenteJoePublic.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");
@@ -26,6 +27,7 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
             e.printStackTrace();
         }
     }
+
     // Probability to be converted to a resistance agent
     private int probabilityToConvertResistance;
 
@@ -65,7 +67,6 @@ public class AgenteJoePublic extends Agent implements AgenteSimulacion {
         });
         // Agent barrier
         informThread.start();
-        // TODO: Se puede negociar donde esperar la barrera
         ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
         // Obtain architect AID

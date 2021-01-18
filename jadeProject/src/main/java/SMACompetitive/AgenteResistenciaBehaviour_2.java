@@ -51,10 +51,6 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
 
     @Override
     public void action() {
-        // Comprobacion de que no se ha terminado el juego
-        // TODO: Esto no debería existir
-//        this.endOfGame = checkGameOver();
-
         if (!endOfGame) {
             // Pedimos y recibimos el estado de la simulación
             requestGameStatus();
@@ -96,36 +92,36 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
                 } else {
                     // Acciones normales (tener en cuenta al orcaulo?)
                     if (nJP > 0) {
-                        double estadoDeAnimo =  this.random.nextDouble();
+                        double estadoDeAnimo = this.random.nextDouble();
                         log.info("BATTLE INTERN RESISTANCE - estadoDeAnimo: " + estadoDeAnimo);
                         log.info("Agente aliados(S) " + nRe);
                         log.info("Agente enemigos(R) " + nSi);
-                        if (oraculo){
+                        if (oraculo) {
 
-                            if (nRe > nSi){
-                                if (estadoDeAnimo > 0.5){
+                            if (nRe > nSi) {
+                                if (estadoDeAnimo > 0.5) {
                                     combatir();
-                                }else{
+                                } else {
                                     reclutar();
                                 }
-                            }else{
-                                if (estadoDeAnimo > 0.1){
+                            } else {
+                                if (estadoDeAnimo > 0.1) {
                                     reclutar();
-                                }else{
+                                } else {
                                     combatir();
                                 }
                             }
-                        } else{
-                            if (nRe > nSi){
-                                if (estadoDeAnimo > 0.8){
+                        } else {
+                            if (nRe > nSi) {
+                                if (estadoDeAnimo > 0.8) {
                                     reclutar();
-                                }else{
+                                } else {
                                     combatir();
                                 }
-                            }else{
-                                if (estadoDeAnimo > 0.2){
+                            } else {
+                                if (estadoDeAnimo > 0.2) {
                                     reclutar();
-                                }else{
+                                } else {
                                     combatir();
                                 }
                             }
@@ -140,7 +136,7 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
 
     }
 
-    private void reclutar(){
+    private void reclutar() {
         // Intentamos reclutar
         log.info("Agente Resistencia " + myAgent.getName() + " comienza a reclutar");
         requestJoePublicAgent();
@@ -155,7 +151,7 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
         log.info("Agente Resistencia " + myAgent.getName() + " termina de reclutar");
     }
 
-    private void combatir(){
+    private void combatir() {
         log.info("Agente Resistencia " + myAgent.getName() + " quiere luchar");
         // Habrá que luchar
         sendRequestForMatch();
@@ -169,7 +165,6 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
             // Calculo de la batalla
             Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
             log.info("Agente Resistencia " + myAgent.getName() + " resultado de batalla: " + result);
-            // TODO: Se cambia el orden para evitar fallos
             // Enviamos el resultado al otro agente
             sendResultToOponent(agentName, result);
             // Enviamos el resultado al arquitecto
@@ -440,7 +435,6 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
 
     private void requestJoePublicAgent() {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
-        //TODO: Lo hago aqui para simplificar codigo
         SimulationStats.getInstance().increaseNumberOfResistanceRecluitments();
         aclMessage.addReceiver(arquitectAID);
         try {
@@ -453,7 +447,6 @@ class AgenteResistenciaBehaviour_2 extends SimpleBehaviour {
     }
 
     private AID anyoneWantsToBattle() {
-        // TODO: Comprobar que no hay deadlocks
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE), WAITING_TIME);
         // aclMessage == null si no hay peticiones de batalla
         boolean wantToBattle = aclMessage != null;

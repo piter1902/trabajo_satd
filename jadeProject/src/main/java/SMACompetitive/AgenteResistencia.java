@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 public class AgenteResistencia extends Agent implements AgenteSimulacion {
 
     private static Logger log = null;
+
     static {
         InputStream stream = AgenteResistencia.class.getClassLoader().
                 getResourceAsStream("main/resources/logging.properties");
@@ -24,6 +25,7 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
             e.printStackTrace();
         }
     }
+
     protected int bonus;
 
     private String name;
@@ -38,7 +40,6 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
         this.name = (String) args[0];
         this.bonus = Constants.INITIAL_BONUS;
         // Thread que escucha el mensaje de tipo INFORM
-        // TODO: Esto esta aqui un poco de gratis, igual es incompatible con los demas
         informThread = new Thread(() -> {
             // Esperamos el mensaje de kill
             ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
@@ -49,7 +50,6 @@ public class AgenteResistencia extends Agent implements AgenteSimulacion {
         });
         informThread.start();
         // Agent Barrier
-        // TODO: Se puede negociar donde esperar la barrera
         ACLMessage aclMessage = this.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE));
         TimeoutAdapter.sendACKBack(aclMessage.getSender(), this);
         log.info("Agente Resistencia " + getName() + " sale de la barrera ");

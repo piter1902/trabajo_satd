@@ -24,6 +24,7 @@ public class AgenteNeo extends AgenteResistencia {
             e.printStackTrace();
         }
     }
+
     private Thread agreeThread;
 
     @Override

@@ -118,7 +118,6 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
                             // Calculo de la batalla
                             Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
                             log.info("Agente Sistema " + myAgent.getName() + " resultado de batalla: " + result);
-                            // TODO: Se cambia el orden para evitar fallos
                             // Enviamos el resultado al otro agente
                             sendResultToOponent(agentName, result);
                             // Enviamos el resultado al arquitecto
@@ -338,7 +337,7 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
         } else if (response == Constants.JOEPUBLIC_RESPONSE.NO) {
             // El agente del sistema mata al JoePublic no convertido
             type = Constants.ARQUITECT_MESSAGE.KILL_JOEPUBLIC;
-            // TODO: Penalizacion del sistema por matar a un agente
+            // Penalizacion del sistema por matar a un agente
             ((AgenteSimulacion) this.myAgent).recalcBonus(-1);
         } else if (response == Constants.JOEPUBLIC_RESPONSE.ORACULO) {
             type = Constants.ARQUITECT_MESSAGE.ORACULO_FOUND_SYSTEM;
@@ -398,7 +397,6 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
 
     private void requestJoePublicAgent() {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
-        //TODO: Lo hago aqui para simplificar codigo
         SimulationStats.getInstance().increaseNumberOfSystemRecluitments();
         aclMessage.addReceiver(arquitectAID);
         try {
@@ -411,7 +409,6 @@ class AgenteSistemaBehaviour extends SimpleBehaviour {
     }
 
     private AID anyoneWantsToBattle() {
-        // TODO: Comprobar que no hay deadlocks
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE), WAITING_TIME);
         // aclMessage == null si no hay peticiones de batalla
         boolean wantToBattle = aclMessage != null;

@@ -51,10 +51,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
     @Override
     public void action() {
-        // Comprobacion de que no se ha terminado el juego
-        // TODO: Esto no debería existir
-//        this.endOfGame = checkGameOver();
-
         if (!endOfGame) {
             // Pedimos y recibimos el estado de la simulación
             requestGameStatus();
@@ -121,7 +117,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
                             // Calculo de la batalla
                             Constants.BATTLE_RESPONSE result = battleIntern(enemyBonus);
                             log.info("Agente Resistencia " + myAgent.getName() + " resultado de batalla: " + result);
-                            // TODO: Se cambia el orden para evitar fallos
                             // Enviamos el resultado al otro agente
                             sendResultToOponent(agentName, result);
                             // Enviamos el resultado al arquitecto
@@ -398,7 +393,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
 
     private void requestJoePublicAgent() {
         ACLMessage aclMessage = new ACLMessage(ACLMessage.REQUEST);
-        //TODO: Lo hago aqui para simplificar codigo
         SimulationStats.getInstance().increaseNumberOfResistanceRecluitments();
         aclMessage.addReceiver(arquitectAID);
         try {
@@ -411,7 +405,6 @@ class AgenteResistenciaBehaviour extends SimpleBehaviour {
     }
 
     private AID anyoneWantsToBattle() {
-        // TODO: Comprobar que no hay deadlocks
         ACLMessage aclMessage = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE), WAITING_TIME);
         // aclMessage == null si no hay peticiones de batalla
         boolean wantToBattle = aclMessage != null;

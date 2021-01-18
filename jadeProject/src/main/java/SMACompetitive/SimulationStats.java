@@ -8,7 +8,6 @@ public class SimulationStats {
     private final SimulationStatsGUI simulationStatsGUI;
     // Variables to log
     // Número de peticiones del estado del juego
-    // TODO:puede ser interesante separarlo en RESISTANCE | SYSTEM
     private int numberOfGetGameStatus;
     // JP reclutados
     private int numberOfResistanceConversions;
